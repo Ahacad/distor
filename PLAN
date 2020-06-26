@@ -16,6 +16,12 @@ section-name    project-belonged-to estimated-time  DDL #
 6. 
 
 
+
+the sections:
+
+|name of the section|belonged to which project|time estimation(section as the unit)|DDL|remarks|
+
+
 ## How to build
 
 Build it progressively
