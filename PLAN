@@ -1,0 +1,34 @@
+
+
+
+for each "section":
+
+section-name    project-belonged-to estimated-time  DDL #
+
+
+## What I need:
+
+1. the ability to **add** and **store** the sections
+2. the ability to **print** the sections, more over, to print them as according to different **choices** (like by DDL, by project, etc.)
+3. different **color** for different things (customized)
+4. calculate whether I am able to do the things before DDL
+5. an interactive UI like ikhal to modify the attributes
+6. 
+
+
+## How to build
+
+Build it progressively
+
+### First phase
+
+give only primitive usages, able to store information and extract information, build the main frame
+
+
+
+
+### Second phase 
+
+build better UI 
+
+
