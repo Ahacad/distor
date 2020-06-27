@@ -209,28 +209,43 @@ if __name__ == "__main__":
 
 
 # WHAT NEXT
-
 # learn to use argparse better, and build usages around it
-
-
+#
+#
 # YET TO BUILD:
-# autoclean finished sections
+## LITTLE THINGS
+# testInput (with python raise exceptions, help ensure input quality)
+#
+#
+## MAIN FEATURES
+###  CHECK whether you can make it before DDL
+### MORE COLORS
+# use sty or the like to manage colors
+### GROUPING
 # different coloring for grouped sections
 # Divide one section into a series of small sections while being able to
 #     represent their relationships
+###  FILTER
+### interactive software (like khal)
+#
+#
+#
+#
+## POSSIBLE FEATURES
 # More flexibly add columns, use pandas DataFrame or python lists to manage
-#     columns
-# testInput (with python raise exceptions, help ensure input quality)
-# delete entries and clear the whole database (with warnings)
-# modiry entries
+#     columns, (allow infinite columnts)
+#
+# modiry entries (I can just modify the json manually)
 # database robustness: the mechanism to allow modify the basic sections
 #    (maybe add more than the names later, so change them into more
 #    flexible sections)
-# filter
-# CHECK whether you can make it before DDL
+#
 # better UI
-# interactive software (like khal)
-# add sections from files
+#
+## DONE
+# x autoclean finished sections
+# x delete entries and clear the whole database (with warnings)
+
 
 
 
