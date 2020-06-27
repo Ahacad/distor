@@ -54,11 +54,12 @@ def addEntry(number, name, project, timeEstimation, DDL, remarks):
     return 0
 
 
-def deprecateEntry():
+def deprecateEntry(entryNumber):
     """remove the entry from the existing pool and add to the deprecated pool
-
     """
-    pass
+    for i in range(len(sections["sections"])):
+        if sections["sections"][i]["Number"] == entryNumber:
+            return sections["sections"].pop(i)
 
 
 def modifyEntry():
@@ -128,6 +129,8 @@ def cli():
                         "remeters)")
     parser.add_argument("-n", action="store_true", help="whether to " +
                         "section number or not")
+    parser.add_argument("-d", nargs=1, help="input the number of the"
+                        " section to be deleted")
     args = parser.parse_args()
     return args
 
@@ -155,6 +158,7 @@ def main():
     if os.path.exists(storedPath):
         sections = loadSection()
     if args.a:
+        
         number = args.a[0]
         name = args.a[1]
         project = args.a[2]
@@ -163,6 +167,9 @@ def main():
         remarks = args.a[5]
         testInput(number, name, project, timeEstimation, DDL, remarks)
         addEntry(number, name, project, timeEstimation, DDL, remarks)
+    if args.d:
+        if not deprecateEntry(args.d[0]):
+            raise ValueError("Invaid delete input!")
     sortEntry()
     if args.n:
         printEntry(printLineNumber=True)
