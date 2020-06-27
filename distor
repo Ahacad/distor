@@ -7,6 +7,8 @@ import json
 
 sections = {}
 sections["sections"] = []
+deprecatedSections = {}
+deprecatedSections["sections"] = {}
 storedPath = "/home/ahacad/.distor/stored.json"
 deprecatedPath = "/home/ahacad/.distor/deprecated.json"
 
@@ -30,6 +32,9 @@ def loadSection():
     """
     with open(storedPath) as json_file:
         sections = json.load(json_file)
+    global deprecatedSections
+    with open(deprecatedPath) as json_file:
+        deprecatedSections = json.load(json_file)
     return sections
 
 
@@ -38,18 +43,20 @@ def writeEntry():
     """
     with open(storedPath, "w") as outfile:
         json.dump(sections, outfile, indent=4)
+    with open(deprecatedPath, "w") as outfile:
+        json.dump(deprecatedSections, outfile, indent=4)
 
 
 def addEntry(number, name, project, timeEstimation, DDL, remarks):
     """add an entry to the existing pool
     """
     sections["sections"].append({
-        "Number": number,
-        "Name": name,
-        "Project": project,
-        "Time Estimation": timeEstimation,
+        "number": number,
+        "name": name,
+        "project": project,
+        "timeestimation": timeEstimation,
         "DDL": DDL,
-        "Remarks": remarks
+        "remarks": remarks
         })
     return 0
 
@@ -58,11 +65,12 @@ def deprecateEntry(entryNumber):
     """remove the entry from the existing pool and add to the deprecated pool
     """
     for i in range(len(sections["sections"])):
-        if sections["sections"][i]["Number"] == entryNumber:
-            return sections["sections"].pop(i)
+        if sections["sections"][i]["number"] == entryNumber:
+            deprecatedSections["sections"].append(sections["sections"].pop(i))
+            return 1
 
 
-def modifyEntry():
+def modifyEntry(entryNumber):
     """modify some specific entries
     """
     pass
@@ -77,13 +85,13 @@ def printEntry(printLineNumber=False, width=19):
           f"{'TIME ESTIMATED':^{width}}|{'DDL':^{width}}|" +
           f"{'REMARKS':^{width}}|")
     for section in sections["sections"]:
-        name = section["Name"]
-        project = section["Project"]
-        timeEstimation = section["Time Estimation"]
+        name = section["name"]
+        project = section["project"]
+        timeEstimation = section["timeEstimation"]
         DDL = section["DDL"]
-        remarks = section["Remarks"]
+        remarks = section["remarks"]
         if printLineNumber:
-            number = section["Number"]
+            number = section["number"]
         else:
             number = ""
         if number:
@@ -158,7 +166,7 @@ def main():
     if os.path.exists(storedPath):
         sections = loadSection()
     if args.a:
-        
+
         number = args.a[0]
         name = args.a[1]
         project = args.a[2]
@@ -190,6 +198,8 @@ if __name__ == "__main__":
 
 
 # YET TO BUILD:
+# autoclean finished sections
+# different coloring for grouped sections
 # Divide one section into a series of small sections while being able to
 #     represent their relationships
 # More flexibly add columns, use pandas DataFrame or python lists to manage

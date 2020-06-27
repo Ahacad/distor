@@ -1,6 +1,7 @@
 
 
 
+
 for each "section":
 
 section-name    project-belonged-to estimated-time  DDL #
@@ -31,10 +32,8 @@ Build it progressively
 give only primitive usages, able to store information and extract information, build the main frame
 
 
-
-
 ### Second phase 
 
 build better UI 
 
-
+# A new tool: DTP, distor for projects ?
