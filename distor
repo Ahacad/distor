@@ -67,9 +67,11 @@ def modifyEntry():
     pass
 
 
-def printEntry(width=17):
+def printEntry(printLineNumber=False, width=19):
     """print the entries in the existing pool, you can choose the way to display
     """
+    if printLineNumber:
+        print(f"{'NUMBER':^{width}}", end="")
     print(f"|{'SECTION NAME':^{width}}|{'PROJECT NAME':^{width}}|" +
           f"{'TIME ESTIMATED':^{width}}|{'DDL':^{width}}|" +
           f"{'REMARKS':^{width}}|")
@@ -79,6 +81,12 @@ def printEntry(width=17):
         timeEstimation = section["Time Estimation"]
         DDL = section["DDL"]
         remarks = section["Remarks"]
+        if printLineNumber:
+            number = section["Number"]
+        else:
+            number = ""
+        if number:
+            print(f"{number:^{width}}", end="")
         print(f"|{colors.GREEN}{name:^{width}}{colors.RESET}|" +
               f"{colors.YELLOW}{project:^{width}}{colors.RESET}|" +
               f"{colors.BLUE}{timeEstimation:^{width}}{colors.RESET}|" +
@@ -118,6 +126,8 @@ def cli():
                         " of the section, Project name, " +
                         "Time Estimation, DDL, and remarks (6 pa" +
                         "remeters)")
+    parser.add_argument("-n", action="store_true", help="whether to " +
+                        "section number or not")
     args = parser.parse_args()
     return args
 
@@ -154,7 +164,10 @@ def main():
         testInput(number, name, project, timeEstimation, DDL, remarks)
         addEntry(number, name, project, timeEstimation, DDL, remarks)
     sortEntry()
-    printEntry()
+    if args.n:
+        printEntry(printLineNumber=True)
+    else:
+        printEntry()
     writeEntry()
     return 0
 
@@ -170,9 +183,13 @@ if __name__ == "__main__":
 
 
 # YET TO BUILD:
+# Divide one section into a series of small sections while being able to
+#     represent their relationships
+# More flexibly add columns, use pandas DataFrame or python lists to manage
+#     columns
 # testInput (with python raise exceptions, help ensure input quality)
 # delete entries and clear the whole database (with warnings)
-# modiry entries 
+# modiry entries
 # database robustness: the mechanism to allow modify the basic sections
 #    (maybe add more than the names later, so change them into more
 #    flexible sections)
