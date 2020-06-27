@@ -79,11 +79,12 @@ def modifyEntry(entryNumber):
 def printEntry(printLineNumber=False, width=19):
     """print the entries in the existing pool, you can choose the way to display
     """
+    longWidth = 30
     if printLineNumber:
         print(f"{'NUMBER':^{width}}", end="")
-    print(f"|{'SECTION NAME':^{width}}|{'PROJECT NAME':^{width}}|" +
+    print(f"|{'SECTION NAME':^{longWidth}}|{'PROJECT NAME':^{width}}|" +
           f"{'TIME ESTIMATED':^{width}}|{'DDL':^{width}}|" +
-          f"{'REMARKS':^{width}}|")
+          f"{'REMARKS':^{longWidth}}|")
     for section in sections:
         name = section["name"]
         project = section["project"]
@@ -96,11 +97,11 @@ def printEntry(printLineNumber=False, width=19):
             number = ""
         if number:
             print(f"{number:^{width}}", end="")
-        print(f"|{colors.GREEN}{name:^{width}}{colors.RESET}|" +
+        print(f"|{colors.GREEN}{name:^{longWidth}}{colors.RESET}|" +
               f"{colors.YELLOW}{project:^{width}}{colors.RESET}|" +
               f"{colors.BLUE}{timeEstimation:^{width}}{colors.RESET}|" +
               f"{colors.CYAN}{DDL:^{width}}{colors.RESET}|" +
-              f"{colors.PURPLE}{remarks:^{width}}{colors.RESET}|")
+              f"{colors.PURPLE}{remarks:^{longWidth}}{colors.RESET}|")
     return 0
 
 
@@ -237,6 +238,8 @@ if __name__ == "__main__":
 ## POSSIBLE FEATURES
 # More flexibly add columns, use pandas DataFrame or python lists to manage
 #     columns, (allow infinite columnts)
+#
+# Print that automatically fit the length of string?
 #
 # modiry entries (I can just modify the json manually)
 # database robustness: the mechanism to allow modify the basic sections
