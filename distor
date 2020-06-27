@@ -143,6 +143,7 @@ def cli():
                         " section to be deleted")
     parser.add_argument("-c", action="store_true", help="automatically" +
                         " clean sections that have been finished")
+    parser.add_argument("-w", nargs=1, help="width of print")
     args = parser.parse_args()
     return args
 
@@ -195,10 +196,14 @@ def main():
     if args.c:
         autoClean()
     sortEntry()
-    if args.n:
-        printEntry(printLineNumber=True)
+    if args.w:
+        width = args.w[0]
     else:
-        printEntry()
+        width = 17
+    if args.n:
+        printEntry(printLineNumber=True, width=width)
+    else:
+        printEntry(width=width)
     writeEntry()
     return 0
 
