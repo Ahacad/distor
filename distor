@@ -5,10 +5,8 @@ import os
 import json
 
 
-sections = {}
-sections["sections"] = []
-deprecatedSections = {}
-deprecatedSections["sections"] = {}
+sections = []
+deprecatedSections = []
 storedPath = "/home/ahacad/.distor/stored.json"
 deprecatedPath = "/home/ahacad/.distor/deprecated.json"
 
@@ -50,7 +48,7 @@ def writeEntry():
 def addEntry(number, name, project, timeEstimation, DDL, remarks):
     """add an entry to the existing pool
     """
-    sections["sections"].append({
+    sections.append({
         "number": number,
         "name": name,
         "project": project,
@@ -66,9 +64,9 @@ def addEntry(number, name, project, timeEstimation, DDL, remarks):
 def deprecateEntry(entryNumber):
     """remove the entry from the existing pool and add to the deprecated pool
     """
-    for i in range(len(sections["sections"])):
-        if sections["sections"][i]["number"] == entryNumber:
-            deprecatedSections["sections"].append(sections["sections"].pop(i))
+    for i in range(len(sections)):
+        if sections[i]["number"] == entryNumber:
+            deprecatedSections.append(sections.pop(i))
             return 1  # must return 1!
 
 
@@ -86,7 +84,7 @@ def printEntry(printLineNumber=False, width=19):
     print(f"|{'SECTION NAME':^{width}}|{'PROJECT NAME':^{width}}|" +
           f"{'TIME ESTIMATED':^{width}}|{'DDL':^{width}}|" +
           f"{'REMARKS':^{width}}|")
-    for section in sections["sections"]:
+    for section in sections:
         name = section["name"]
         project = section["project"]
         timeEstimation = section["timeEstimation"]
@@ -117,7 +115,7 @@ def sortEntry(choice="DDL"):
     """
     global sections
     if choice == "DDL":
-        sections["sections"].sort(key=sortFuncs.sortByDDL)
+        sections.sort(key=sortFuncs.sortByDDL)
     else:
         pass
 
@@ -165,10 +163,10 @@ def autoClean():
     """automatically clean sections that have been finished
     """
     global deprecatedSections
-    for section in sections["sections"]:
+    for section in sections:
         if section["timeUsed"]:
-            deprecatedSections["sections"].append(section)
-            sections["sections"].remove(section)
+            deprecatedSections.append(section)
+            sections.remove(section)
     return 0
 
 
