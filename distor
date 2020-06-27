@@ -9,6 +9,7 @@ sections = []
 deprecatedSections = []
 storedPath = "/home/ahacad/.distor/stored.json"
 deprecatedPath = "/home/ahacad/.distor/deprecated.json"
+extendedPath = "/home/ahacad/.distor/extended.json"
 
 
 class colors:
@@ -33,6 +34,9 @@ def loadSection():
     global deprecatedSections
     with open(deprecatedPath) as json_file:
         deprecatedSections = json.load(json_file)
+    global extendedSections
+    with open(extendedPath) as json_file:
+        extendedSections = json.load(json_file)
     return sections
 
 
@@ -43,9 +47,11 @@ def writeEntry():
         json.dump(sections, outfile, indent=4)
     with open(deprecatedPath, "w") as outfile:
         json.dump(deprecatedSections, outfile, indent=4)
+    with open(extendedPath, "w") as outfile:
+        json.dump(extendedSections, outfile, indent=4)
 
 
-def addEntry(number, name, project, timeEstimation, DDL, remarks):
+def addEntry(number, name, project, timeEstimation, wtype, DDL, remarks):
     """add an entry to the existing pool
     """
     sections.append({
@@ -53,6 +59,7 @@ def addEntry(number, name, project, timeEstimation, DDL, remarks):
         "name": name,
         "project": project,
         "timeEstimation": timeEstimation,
+        "wtype": wtype,
         "DDL": DDL,
         "remarks": remarks,
         "timeUsed": "",
@@ -73,42 +80,67 @@ def deprecateEntry(entryNumber):
 def modifyEntry(entryNumber):
     """modify some specific entries
     """
-    pass
+    
 
 
-def printEntry(printLineNumber=False, width=19):
+def printEntry(printLineNumber=False, printAfterwards=False, width=19):
     """print the entries in the existing pool, you can choose the way to display
     """
+    shortWidth = 4
     longWidth = 30
     if printLineNumber:
         print(f"{'NUMBER':^{width}}", end="")
     print(f"|{'SECTION NAME':^{longWidth}}|{'PROJECT NAME':^{width}}|" +
-          f"{'TIME ESTIMATED':^{width}}|{'DDL':^{width}}|" +
-          f"{'REMARKS':^{longWidth}}|")
+          f"{'T/E':^{shortWidth}}|" +
+          f"{'Type':^{shortWidth}}|"
+          f"{'DDL':^{width}}|" +
+          f"{'REMARKS':^{longWidth}}|", end="")
+    if printAfterwards:
+        print(f"{'T/U':^{shortWidth}}|" +
+              f"{'After Thoughts':^{width}}")
+    else:
+        print("\n", end="")
     for section in sections:
         name = section["name"]
         project = section["project"]
         timeEstimation = section["timeEstimation"]
         DDL = section["DDL"]
+        wtype = section["wtype"]
         remarks = section["remarks"]
         if printLineNumber:
             number = section["number"]
         else:
             number = ""
+        timeUsed = section["timeUsed"]
+        afterThoughts = section["afterThoughts"]
         if number:
             print(f"{number:^{width}}", end="")
         print(f"|{colors.GREEN}{name:^{longWidth}}{colors.RESET}|" +
               f"{colors.YELLOW}{project:^{width}}{colors.RESET}|" +
-              f"{colors.BLUE}{timeEstimation:^{width}}{colors.RESET}|" +
+              f"{colors.BLUE}{timeEstimation:^{shortWidth}}{colors.RESET}|" +
+              f"{wtype:^{shortWidth}}|" +
               f"{colors.CYAN}{DDL:^{width}}{colors.RESET}|" +
-              f"{colors.PURPLE}{remarks:^{longWidth}}{colors.RESET}|")
+              f"{colors.PURPLE}{remarks:^{longWidth}}{colors.RESET}|", end="")
+        if printAfterwards:
+            print(f"{timeUsed:^{shortWidth}}|" +
+                  f"{afterThoughts:^{width}}")
+        else:
+            print("\n", end="")
     return 0
 
 
 class sortFuncs:
     def sortByDDL(x):
-        """sort the """
+        """sort the sections by DDL"""
         return x['DDL']
+
+    def sortByProject(x):
+        """sort the sections by project"""
+        return x["project"]
+
+    def sortByNumber(x):
+        """sort the sections by number"""
+        return x["number"]
 
 
 def sortEntry(choice="DDL"):
@@ -117,8 +149,10 @@ def sortEntry(choice="DDL"):
     global sections
     if choice == "DDL":
         sections.sort(key=sortFuncs.sortByDDL)
-    else:
-        pass
+    elif choice == "project":
+        sections.sort(key=sortFuncs.sortByProject)
+    elif choice == "number":
+        sections.sort(key=sortFuncs.sortByNumber)
 
 
 def estimateTime():
@@ -143,11 +177,12 @@ def cli():
     parser.add_argument("-c", action="store_true", help="automatically" +
                         " clean sections that have been finished")
     parser.add_argument("-w", nargs=1, help="width of print")
+    parser.add_argument("-s", nargs=1, help="choose way of sort")
     args = parser.parse_args()
     return args
 
 
-def testInput(number, name, project, timeEstimation, DDL, remarks):
+def testInput(number, name, project, timeEstimation, wtype, DDL, remarks):
     """ test the form of the input
     """
     pass
@@ -165,8 +200,11 @@ def autoClean():
     """
     global deprecatedSections
     for section in sections:
-        if section["timeUsed"]:
+        if section["timeUsed"] == section["estimateTime"]:
             deprecatedSections.append(section)
+            sections.remove(section)
+        elif section["timeUsed"] > section["estimateTime"]:
+            extendedSections.append(section)
             sections.remove(section)
     return 0
 
@@ -187,20 +225,25 @@ def main():
         timeEstimation = args.a[3]
         DDL = args.a[4]
         remarks = args.a[5]
-        testInput(number, name, project, timeEstimation, DDL, remarks)
-        addEntry(number, name, project, timeEstimation, DDL, remarks)
+        testInput(number, name, project, timeEstimation, wtype, DDL, remarks)
+        addEntry(number, name, project, timeEstimation, wtype, DDL, remarks)
     if args.d:
         if not deprecateEntry(args.d[0]):
             raise ValueError("Invaid delete input!")
     if args.c:
         autoClean()
-    sortEntry()
+    if not args.s:
+        sortEntry()
+    elif args.s[0] == "p":
+        sortEntry(choice="project")
+    elif args.s[0] == "n":
+        sortEntry(choice="number")
     if args.w:
         width = args.w[0]
     else:
         width = 17
     if args.n:
-        printEntry(printLineNumber=True, width=width)
+        printEntry(printLineNumber=True, printAfterwards=True, width=width)
     else:
         printEntry(width=width)
     writeEntry()
