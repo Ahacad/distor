@@ -54,9 +54,11 @@ def addEntry(number, name, project, timeEstimation, DDL, remarks):
         "number": number,
         "name": name,
         "project": project,
-        "timeestimation": timeEstimation,
+        "timeEstimation": timeEstimation,
         "DDL": DDL,
-        "remarks": remarks
+        "remarks": remarks,
+        "timeUsed": "",
+        "afterThoughts": ""
         })
     return 0
 
@@ -67,7 +69,7 @@ def deprecateEntry(entryNumber):
     for i in range(len(sections["sections"])):
         if sections["sections"][i]["number"] == entryNumber:
             deprecatedSections["sections"].append(sections["sections"].pop(i))
-            return 1
+            return 1  # must return 1!
 
 
 def modifyEntry(entryNumber):
@@ -139,6 +141,8 @@ def cli():
                         "section number or not")
     parser.add_argument("-d", nargs=1, help="input the number of the"
                         " section to be deleted")
+    parser.add_argument("-c", action="store_true", help="automatically" +
+                        " clean sections that have been finished")
     args = parser.parse_args()
     return args
 
@@ -156,6 +160,17 @@ def checkDDL():
     pass
 
 
+def autoClean():
+    """automatically clean sections that have been finished
+    """
+    global deprecatedSections
+    for section in sections["sections"]:
+        if section["timeUsed"]:
+            deprecatedSections["sections"].append(section)
+            sections["sections"].remove(section)
+    return 0
+
+
 def main():
     global sections
     # sections = loadSection()
@@ -166,7 +181,6 @@ def main():
     if os.path.exists(storedPath):
         sections = loadSection()
     if args.a:
-
         number = args.a[0]
         name = args.a[1]
         project = args.a[2]
@@ -178,6 +192,8 @@ def main():
     if args.d:
         if not deprecateEntry(args.d[0]):
             raise ValueError("Invaid delete input!")
+    if args.c:
+        autoClean()
     sortEntry()
     if args.n:
         printEntry(printLineNumber=True)
