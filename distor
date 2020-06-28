@@ -3,6 +3,7 @@
 import argparse
 import os
 import json
+from datetime import datetime, date
 
 
 sections = []
@@ -77,15 +78,20 @@ def deprecateEntry(entryNumber):
             return 1  # must return 1!
 
 
-def modifyEntry(entryNumber):
+def modifyEntry(number, argument):
     """modify some specific entries
     """
-    
+    columnName, modification = argument.split("=")
+    if (not columnName) or (not modification):
+        raise ValueError("Invalid modification input")
+    for section in sections:
+        if section["number"] == number:
+            section[columnName] = modification
+            return 0
 
 
-def printEntry(printLineNumber=False, printAfterwards=False, width=19):
-    """print the entries in the existing pool, you can choose the way to display
-    """
+def printSectionHead(printLineNumber=False, printAfterwards=False, width=19):
+    """print entries head"""
     shortWidth = 4
     longWidth = 30
     if printLineNumber:
@@ -100,32 +106,46 @@ def printEntry(printLineNumber=False, printAfterwards=False, width=19):
               f"{'After Thoughts':^{width}}")
     else:
         print("\n", end="")
+
+
+def printSection(section, printLineNumber=False, printAfterwards=False, width=19):
+    """print one entry"""
+    shortWidth = 4
+    longWidth = 30
+    name = section["name"]
+    project = section["project"]
+    timeEstimation = section["timeEstimation"]
+    DDL = section["DDL"]
+    wtype = section["wtype"]
+    remarks = section["remarks"]
+    if printLineNumber:
+        number = section["number"]
+    else:
+        number = ""
+    timeUsed = section["timeUsed"]
+    afterThoughts = section["afterThoughts"]
+    if number:
+        print(f"{number:^{width}}", end="")
+    print(f"|{colors.GREEN}{name:^{longWidth}}{colors.RESET}|" +
+          f"{colors.YELLOW}{project:^{width}}{colors.RESET}|" +
+          f"{colors.BLUE}{timeEstimation:^{shortWidth}}{colors.RESET}|" +
+          f"{wtype:^{shortWidth}}|" +
+          f"{colors.CYAN}{DDL:^{width}}{colors.RESET}|" +
+          f"{colors.PURPLE}{remarks:^{longWidth}}{colors.RESET}|", end="")
+    if printAfterwards:
+        print(f"{timeUsed:^{shortWidth}}|" +
+              f"{afterThoughts:^{width}}")
+    else:
+        print("\n", end="")
+    return 0
+
+
+def printSections(printLineNumber=False, printAfterwards=False, width=19):
+    """print the entries in the existing pool, you can choose the way to display
+    """
+    printSectionHead(printLineNumber, printAfterwards, width)
     for section in sections:
-        name = section["name"]
-        project = section["project"]
-        timeEstimation = section["timeEstimation"]
-        DDL = section["DDL"]
-        wtype = section["wtype"]
-        remarks = section["remarks"]
-        if printLineNumber:
-            number = section["number"]
-        else:
-            number = ""
-        timeUsed = section["timeUsed"]
-        afterThoughts = section["afterThoughts"]
-        if number:
-            print(f"{number:^{width}}", end="")
-        print(f"|{colors.GREEN}{name:^{longWidth}}{colors.RESET}|" +
-              f"{colors.YELLOW}{project:^{width}}{colors.RESET}|" +
-              f"{colors.BLUE}{timeEstimation:^{shortWidth}}{colors.RESET}|" +
-              f"{wtype:^{shortWidth}}|" +
-              f"{colors.CYAN}{DDL:^{width}}{colors.RESET}|" +
-              f"{colors.PURPLE}{remarks:^{longWidth}}{colors.RESET}|", end="")
-        if printAfterwards:
-            print(f"{timeUsed:^{shortWidth}}|" +
-                  f"{afterThoughts:^{width}}")
-        else:
-            print("\n", end="")
+        printSection(section, printLineNumber, printAfterwards, width)
     return 0
 
 
@@ -177,7 +197,13 @@ def cli():
     parser.add_argument("-c", action="store_true", help="automatically" +
                         " clean sections that have been finished")
     parser.add_argument("-w", nargs=1, help="width of print")
-    parser.add_argument("-s", nargs=1, help="choose way of sort")
+    parser.add_argument("-s", nargs=1, help="choose way of sort"
+                        "support now: n - sort by number; "
+                        "p - sort by project; "
+                        "d - sort by DDL (default)")
+    parser.add_argument("-m", nargs=2, help="modify entry, input two"
+                        "elements: sectionNumber and modification in "
+                        "the form of \"column=modification\"")
     args = parser.parse_args()
     return args
 
@@ -188,11 +214,22 @@ def testInput(number, name, project, timeEstimation, wtype, DDL, remarks):
     pass
 
 
-def checkDDL():
-    """check whether you can make it before ddl, and thus to 
-    change the plan
+def calculateTimeRemained(ddl, sectionPerDay=24):
+    """calculate time remained between today and the ddl
+    default calculating by starting at morning today and
+    end at night at the ddl day
     """
-    pass
+    today = date.today()
+    ddl = datetime.strptime(ddl, "%Y-%m-%d").date()
+    delta = (ddl - today).days
+    timeRemained = (delta + 1) * sectionPerDay
+    return timeRemained
+
+
+def checkDDL():
+    """check whether you can make it before ddl
+    """
+    
 
 
 def autoClean():
@@ -200,10 +237,10 @@ def autoClean():
     """
     global deprecatedSections
     for section in sections:
-        if section["timeUsed"] == section["estimateTime"]:
+        if section["timeUsed"] == section["timeEstimation"]:
             deprecatedSections.append(section)
             sections.remove(section)
-        elif section["timeUsed"] > section["estimateTime"]:
+        elif section["timeUsed"] > section["timeEstimation"]:
             extendedSections.append(section)
             sections.remove(section)
     return 0
@@ -232,20 +269,27 @@ def main():
             raise ValueError("Invaid delete input!")
     if args.c:
         autoClean()
+
+    if args.m:
+        modifyEntry(args.m[0], args.m[1])
+
     if not args.s:
         sortEntry()
     elif args.s[0] == "p":
         sortEntry(choice="project")
     elif args.s[0] == "n":
         sortEntry(choice="number")
+    elif args.s[0] == "d":
+        sortEntry()
+
     if args.w:
         width = args.w[0]
     else:
         width = 17
     if args.n:
-        printEntry(printLineNumber=True, printAfterwards=True, width=width)
+        printSections(printLineNumber=True, printAfterwards=True, width=width)
     else:
-        printEntry(width=width)
+        printSections(width=width)
     writeEntry()
     return 0
 
