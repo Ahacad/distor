@@ -19,6 +19,8 @@ import argparse
 import os
 import json
 from datetime import datetime, date
+from sty import fg
+#from header import *
 
 
 sections = []
@@ -26,7 +28,7 @@ deprecatedSections = []
 storedPath = "/home/ahacad/.distor/stored.json"
 deprecatedPath = "/home/ahacad/.distor/deprecated.json"
 extendedPath = "/home/ahacad/.distor/extended.json"
-widthType = {"number": "short",
+widthType = {"number": "medium",
              "name": "long",
              "project": "norm",
              "timeEstimation": "short",
@@ -37,9 +39,26 @@ widthType = {"number": "short",
              "afterThoughts": "long"
              }
 widthLength = {"short": 4,
+               "medium": 6,
                "norm": 19,
                "long": 30}
-colorTypes = {}
+colorTypes = {"number": "white",
+              "name": "green",
+              "project": "blue",
+              "timeEstimation": "yellow",
+              "wtype": "cyan",
+              "DDL": "red",
+              "remarks": "magenta",
+              "timeUsed": "white",
+              "afterThoughts": "white"
+              }
+colorsDic = {"red": fg.red,
+             "green": fg.green,
+             "yellow": fg.yellow,
+             "blue": fg.blue,
+             "magenta": fg.magenta,
+             "cyan": fg.cyan,
+             "white": fg.white}
 
 
 class colors:
@@ -119,6 +138,18 @@ def modifyEntry(number, argument):
             return 0
 
 
+def printColor():
+    """print color by sty using the cusomized color dictionary"""
+    pass
+
+
+def colorReset():
+    """reset color by sty"""
+    print(fg.rs, end="")
+
+
+
+
 def printSectionHead(toPrintHeaders, toPrintColumns, printLineNumber=False,
                      printAfterwards=False, width=19):
     """print entries head"""
@@ -131,8 +162,10 @@ def printSection(toPrintHeaders, toPrintColumns, section,
                  printLineNumber=False, printAfterwards=False, width=19):
     """print one entry"""
     for item in toPrintColumns:
+        printColor()
         print(f"{section[item]:^{widthLength[widthType[item]]}}|",
               end="")
+        colorReset()
     print("\n", end="")
 
 
@@ -326,14 +359,16 @@ if __name__ == "__main__":
 #
 ## MAIN FEATURES
 ### MORE COLORS
-# use sty or the like to manage colors
-### Initilization generated config
-#       and header names to cater to different needs
+#       use sty or the like to manage colors
+### rewrite cli with click, substituting argparse
+#      more flexible prints
 ###  CHECK whether you can make it before DDL
 ### GROUPING
 # different coloring for grouped sections
 # Divide one section into a series of small sections while being able to
 #     represent their relationships
+### Initilization generated config
+#       and header names to cater to different needs
 ### Github actions
 ###  FILTER
 ### interactive software (like khal)
