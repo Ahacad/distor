@@ -193,7 +193,8 @@ def estimateTime():
 
 def initializaition():
     """generate conifg file and folders"""
-    pass
+    if not os.path.exists(storedPath):
+        pass
 
 
 def cli():
@@ -324,16 +325,16 @@ if __name__ == "__main__":
 #
 #
 ## MAIN FEATURES
-### Github actions
-### Initilization generated config & more flexibility for column names
-#       and header names to cater to different needs
-###  CHECK whether you can make it before DDL
 ### MORE COLORS
 # use sty or the like to manage colors
+### Initilization generated config
+#       and header names to cater to different needs
+###  CHECK whether you can make it before DDL
 ### GROUPING
 # different coloring for grouped sections
 # Divide one section into a series of small sections while being able to
 #     represent their relationships
+### Github actions
 ###  FILTER
 ### interactive software (like khal)
 #
@@ -356,6 +357,7 @@ if __name__ == "__main__":
 ## DONE
 # x autoclean finished sections
 # x delete entries and clear the whole database (with warnings)
+# x more flexibility for column names
 
 
 
