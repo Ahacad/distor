@@ -1,5 +1,20 @@
 #! /usr/bin/env python3
 
+
+#
+#        "number": number,
+#        "name": name,
+#        "project": project,
+#        "timeEstimation": timeEstimation,
+#        "wtype": wtype,
+#        "DDL": DDL,
+#        "remarks": remarks,
+#        "timeUsed": "",
+#        "afterThoughts": ""
+#
+#
+
+
 import argparse
 import os
 import json
@@ -11,6 +26,20 @@ deprecatedSections = []
 storedPath = "/home/ahacad/.distor/stored.json"
 deprecatedPath = "/home/ahacad/.distor/deprecated.json"
 extendedPath = "/home/ahacad/.distor/extended.json"
+widthType = {"number": "short",
+             "name": "long",
+             "project": "norm",
+             "timeEstimation": "short",
+             "wtype": "short",
+             "DDL": "norm",
+             "remarks": "long",
+             "timeUsed": "short",
+             "afterThoughts": "long"
+             }
+widthLength = {"short": 4,
+               "norm": 19,
+               "long": 30}
+colorTypes = {}
 
 
 class colors:
@@ -90,62 +119,42 @@ def modifyEntry(number, argument):
             return 0
 
 
-def printSectionHead(printLineNumber=False, printAfterwards=False, width=19):
+def printSectionHead(toPrintHeaders, toPrintColumns, printLineNumber=False,
+                     printAfterwards=False, width=19):
     """print entries head"""
-    shortWidth = 4
-    longWidth = 30
-    if printLineNumber:
-        print(f"{'NUMBER':^{width}}", end="")
-    print(f"|{'SECTION NAME':^{longWidth}}|{'PROJECT NAME':^{width}}|" +
-          f"{'T/E':^{shortWidth}}|" +
-          f"{'Type':^{shortWidth}}|"
-          f"{'DDL':^{width}}|" +
-          f"{'REMARKS':^{longWidth}}|", end="")
-    if printAfterwards:
-        print(f"{'T/U':^{shortWidth}}|" +
-              f"{'After Thoughts':^{width}}")
-    else:
-        print("\n", end="")
+    for i in range(len(toPrintHeaders)):
+        print(f"{toPrintHeaders[i]:^{widthLength[widthType[toPrintColumns[i]]]}}|", end="")
+    print("\n", end="")
+    
 
-
-def printSection(section, printLineNumber=False, printAfterwards=False, width=19):
+def printSection(toPrintHeaders, toPrintColumns, section,
+                 printLineNumber=False, printAfterwards=False, width=19):
     """print one entry"""
-    shortWidth = 4
-    longWidth = 30
-    name = section["name"]
-    project = section["project"]
-    timeEstimation = section["timeEstimation"]
-    DDL = section["DDL"]
-    wtype = section["wtype"]
-    remarks = section["remarks"]
-    if printLineNumber:
-        number = section["number"]
-    else:
-        number = ""
-    timeUsed = section["timeUsed"]
-    afterThoughts = section["afterThoughts"]
-    if number:
-        print(f"{number:^{width}}", end="")
-    print(f"|{colors.GREEN}{name:^{longWidth}}{colors.RESET}|" +
-          f"{colors.YELLOW}{project:^{width}}{colors.RESET}|" +
-          f"{colors.BLUE}{timeEstimation:^{shortWidth}}{colors.RESET}|" +
-          f"{wtype:^{shortWidth}}|" +
-          f"{colors.CYAN}{DDL:^{width}}{colors.RESET}|" +
-          f"{colors.PURPLE}{remarks:^{longWidth}}{colors.RESET}|", end="")
-    if printAfterwards:
-        print(f"{timeUsed:^{shortWidth}}|" +
-              f"{afterThoughts:^{width}}")
-    else:
-        print("\n", end="")
-    return 0
+    for item in toPrintColumns:
+        print(f"{section[item]:^{widthLength[widthType[item]]}}|",
+              end="")
+    print("\n", end="")
 
 
 def printSections(printLineNumber=False, printAfterwards=False, width=19):
     """print the entries in the existing pool, you can choose the way to display
     """
-    printSectionHead(printLineNumber, printAfterwards, width)
+    toPrintColumns = ["name", "project", "timeEstimation", "wtype",
+                      "DDL", "remarks"]
+    toPrintHeaders = ["Name", "Project", "T/E", "Type", 
+                      "DDL", "Remarks"]
+    if printLineNumber:
+        toPrintColumns.insert(0, "number")
+        toPrintHeaders.insert(0, "Number")
+    if printAfterwards:
+        toPrintColumns.append("timeUsed")
+        toPrintHeaders.append("T/U")
+        toPrintColumns.append("afterThoughts")
+        toPrintHeaders.append("Thoughts")
+    printSectionHead(toPrintHeaders, toPrintColumns, printLineNumber, printAfterwards, width)
     for section in sections:
-        printSection(section, printLineNumber, printAfterwards, width)
+        printSection(toPrintHeaders, toPrintColumns,
+                     section, printLineNumber, printAfterwards, width)
     return 0
 
 
@@ -182,11 +191,16 @@ def estimateTime():
     pass
 
 
+def initializaition():
+    """generate conifg file and folders"""
+    pass
+
+
 def cli():
     """the command line interface
     """
     parser = argparse.ArgumentParser(description="distor")
-    parser.add_argument("-a", nargs=6, help="please add: Number, Name" +
+    parser.add_argument("-a", nargs=7, help="please add: Number, Name" +
                         " of the section, Project name, " +
                         "Time Estimation, DDL, and remarks (6 pa" +
                         "remeters)")
@@ -260,8 +274,9 @@ def main():
         name = args.a[1]
         project = args.a[2]
         timeEstimation = args.a[3]
-        DDL = args.a[4]
-        remarks = args.a[5]
+        wtype = args.a[4]
+        DDL = args.a[5]
+        remarks = args.a[6]
         testInput(number, name, project, timeEstimation, wtype, DDL, remarks)
         addEntry(number, name, project, timeEstimation, wtype, DDL, remarks)
     if args.d:
@@ -309,6 +324,9 @@ if __name__ == "__main__":
 #
 #
 ## MAIN FEATURES
+### Github actions
+### Initilization generated config & more flexibility for column names
+#       and header names to cater to different needs
 ###  CHECK whether you can make it before DDL
 ### MORE COLORS
 # use sty or the like to manage colors
