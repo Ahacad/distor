@@ -23,11 +23,9 @@ from sty import fg
 #from header import *
 
 
-sections = []
-deprecatedSections = []
-storedPath = "/home/ahacad/.distor/stored.json"
-deprecatedPath = "/home/ahacad/.distor/deprecated.json"
-extendedPath = "/home/ahacad/.distor/extended.json"
+storedPath = "/home/ahacad/.distor/Dev/stored.json"
+deprecatedPath = "/home/ahacad/.distor/Dev/deprecated.json"
+extendedPath = "/home/ahacad/.distor/Dev/extended.json"
 widthType = {"number": "medium",
              "name": "long",
              "project": "norm",
@@ -75,121 +73,136 @@ class colors:
     REVERSE = "\033[;7m""]"
 
 
-def loadSection():
+def loadRows():
     """load sections from the stored json file
     """
+    global rows
     with open(storedPath) as json_file:
-        sections = json.load(json_file)
-    global deprecatedSections
+        rows = json.load(json_file)
+    global deprecatedRows 
     with open(deprecatedPath) as json_file:
-        deprecatedSections = json.load(json_file)
-    global extendedSections
+        deprecatedRows = json.load(json_file)
+    global extendedRows
     with open(extendedPath) as json_file:
-        extendedSections = json.load(json_file)
-    return sections
+        extendedRows = json.load(json_file)
 
 
-def writeEntry():
+def deleteColumn():
+    """delete a whole column"""
+    pass
+
+
+def deleteRow():
+    """delete a whole row"""
+    pass
+
+
+def deleteCell():
+    """modify a single cell, changing it into empty string"""
+    pass
+
+
+def saveRows():
     """store entries to the path
     """
     with open(storedPath, "w") as outfile:
-        json.dump(sections, outfile, indent=4)
+        json.dump(rows, outfile, indent=4)
     with open(deprecatedPath, "w") as outfile:
-        json.dump(deprecatedSections, outfile, indent=4)
+        json.dump(deprecatedRows, outfile, indent=4)
     with open(extendedPath, "w") as outfile:
-        json.dump(extendedSections, outfile, indent=4)
+        json.dump(extendedRows, outfile, indent=4)
 
 
-def addEntry(number, name, project, timeEstimation, wtype, DDL, remarks):
-    """add an entry to the existing pool
-    """
-    sections.append({
-        "number": number,
-        "name": name,
-        "project": project,
-        "timeEstimation": timeEstimation,
-        "wtype": wtype,
-        "DDL": DDL,
-        "remarks": remarks,
-        "timeUsed": "",
-        "afterThoughts": ""
-        })
-    return 0
+#def addEntry(number, name, project, timeEstimation, wtype, DDL, remarks):
+#    """add an entry to the existing pool
+#    """
+#    sections.append({
+#        "number": number,
+#        "name": name,
+#        "project": project,
+#        "timeEstimation": timeEstimation,
+#        "wtype": wtype,
+#        "DDL": DDL,
+#        "remarks": remarks,
+#        "timeUsed": "",
+#        "afterThoughts": ""
+#        })
+#    return 0
 
 
-def deprecateEntry(entryNumber):
-    """remove the entry from the existing pool and add to the deprecated pool
-    """
-    for i in range(len(sections)):
-        if sections[i]["number"] == entryNumber:
-            deprecatedSections.append(sections.pop(i))
-            return 1  # must return 1!
+#def deprecateEntry(entryNumber):
+#    """remove the entry from the existing pool and add to the deprecated pool
+#    """
+#    for i in range(len(sections)):
+#        if sections[i]["number"] == entryNumber:
+#            deprecatedSections.append(sections.pop(i))
+#            return 1  # must return 1!
 
 
-def modifyEntry(number, argument):
-    """modify some specific entries
-    """
-    columnName, modification = argument.split("=")
-    if (not columnName) or (not modification):
-        raise ValueError("Invalid modification input")
-    for section in sections:
-        if section["number"] == number:
-            section[columnName] = modification
-            return 0
+#def modifyEntry(number, argument):
+#    """modify some specific entries
+#    """
+#    columnName, modification = argument.split("=")
+#    if (not columnName) or (not modification):
+#        raise ValueError("Invalid modification input")
+#    for section in sections:
+#        if section["number"] == number:
+#            section[columnName] = modification
+#            return 0
 
 
-def printColor(item):
-    """print color by sty using the cusomized color dictionary"""
-    print(colorsDic[colorTypes[item]], end="")
-
-
-def colorReset():
-    """reset color by sty"""
-    print(fg.rs, end="")
-
-
-
-
-def printSectionHead(toPrintHeaders, toPrintColumns, printLineNumber=False,
-                     printAfterwards=False, width=19):
-    """print entries head"""
-    for i in range(len(toPrintHeaders)):
-        print(f"{toPrintHeaders[i]:^{widthLength[widthType[toPrintColumns[i]]]}}|", end="")
-    print("\n", end="")
-    
-
-def printSection(toPrintHeaders, toPrintColumns, section,
-                 printLineNumber=False, printAfterwards=False, width=19):
-    """print one entry"""
-    for item in toPrintColumns:
-        printColor(item)
-        print(f"{section[item]:^{widthLength[widthType[item]]}}",
-              end="")
-        colorReset()
-        print("|", end="")
-    print("\n", end="")
-
-
-def printSections(printLineNumber=False, printAfterwards=False, width=19):
-    """print the entries in the existing pool, you can choose the way to display
-    """
-    toPrintColumns = ["name", "project", "timeEstimation", "wtype",
-                      "DDL", "remarks"]
-    toPrintHeaders = ["Name", "Project", "T/E", "Type", 
-                      "DDL", "Remarks"]
-    if printLineNumber:
-        toPrintColumns.insert(0, "number")
-        toPrintHeaders.insert(0, "Number")
-    if printAfterwards:
-        toPrintColumns.append("timeUsed")
-        toPrintHeaders.append("T/U")
-        toPrintColumns.append("afterThoughts")
-        toPrintHeaders.append("Thoughts")
-    printSectionHead(toPrintHeaders, toPrintColumns, printLineNumber, printAfterwards, width)
-    for section in sections:
-        printSection(toPrintHeaders, toPrintColumns,
-                     section, printLineNumber, printAfterwards, width)
-    return 0
+#def printColor(item):
+#    """print color by sty using the cusomized color dictionary"""
+#    print(colorsDic[colorTypes[item]], end="")
+#
+#
+#def colorReset():
+#    """reset color by sty"""
+#    print(fg.rs, end="")
+#
+#
+#
+#
+#def printSectionHead(toPrintHeaders, toPrintColumns, printLineNumber=False,
+#                     printAfterwards=False, width=19):
+#    """print entries head"""
+#    for i in range(len(toPrintHeaders)):
+#        print(f"{toPrintHeaders[i]:^{widthLength[widthType[toPrintColumns[i]]]}}|", end="")
+#    print("\n", end="")
+#    
+#
+#def printSection(toPrintHeaders, toPrintColumns, section,
+#                 printLineNumber=False, printAfterwards=False, width=19):
+#    """print one entry"""
+#    for item in toPrintColumns:
+#        printColor(item)
+#        print(f"{section[item]:^{widthLength[widthType[item]]}}",
+#              end="")
+#        colorReset()
+#        print("|", end="")
+#    print("\n", end="")
+#
+#
+#def printSections(printLineNumber=False, printAfterwards=False, width=19):
+#    """print the entries in the existing pool, you can choose the way to display
+#    """
+#    toPrintColumns = ["name", "project", "timeEstimation", "wtype",
+#                      "DDL", "remarks"]
+#    toPrintHeaders = ["Name", "Project", "T/E", "Type", 
+#                      "DDL", "Remarks"]
+#    if printLineNumber:
+#        toPrintColumns.insert(0, "number")
+#        toPrintHeaders.insert(0, "Number")
+#    if printAfterwards:
+#        toPrintColumns.append("timeUsed")
+#        toPrintHeaders.append("T/U")
+#        toPrintColumns.append("afterThoughts")
+#        toPrintHeaders.append("Thoughts")
+#    printSectionHead(toPrintHeaders, toPrintColumns, printLineNumber, printAfterwards, width)
+#    for section in sections:
+#        printSection(toPrintHeaders, toPrintColumns,
+#                     section, printLineNumber, printAfterwards, width)
+#    return 0
 
 
 class sortFuncs:
@@ -296,52 +309,52 @@ def autoClean():
 
 
 def main():
-    global sections
+    global rows
     # sections = loadSection()
     # addEntry(name, project, timeEstimation, DDL, remarks)
     #sections = {"sections": [{"Number": "00001", "Name": "testname1", 
     #"Project": "Mathe", "Time Estimation": "2", "DDL": "2020-06-12", "Remarks": "test"}]}
     args = cli()
     if os.path.exists(storedPath):
-        sections = loadSection()
-    if args.a:
-        number = args.a[0]
-        name = args.a[1]
-        project = args.a[2]
-        timeEstimation = args.a[3]
-        wtype = args.a[4]
-        DDL = args.a[5]
-        remarks = args.a[6]
-        testInput(number, name, project, timeEstimation, wtype, DDL, remarks)
-        addEntry(number, name, project, timeEstimation, wtype, DDL, remarks)
-    if args.d:
-        if not deprecateEntry(args.d[0]):
-            raise ValueError("Invaid delete input!")
-    if args.c:
-        autoClean()
-
-    if args.m:
-        modifyEntry(args.m[0], args.m[1])
-
-    if not args.s:
-        sortEntry()
-    elif args.s[0] == "p":
-        sortEntry(choice="project")
-    elif args.s[0] == "n":
-        sortEntry(choice="number")
-    elif args.s[0] == "d":
-        sortEntry()
-
-    if args.w:
-        width = args.w[0]
-    else:
-        width = 17
-    if args.n:
-        printSections(printLineNumber=True, printAfterwards=True, width=width)
-    else:
-        printSections(width=width)
-    writeEntry()
+        loadRows()
+    saveRows()
     return 0
+    #if args.a:
+    #    number = args.a[0]
+    #    name = args.a[1]
+    #    project = args.a[2]
+    #    timeEstimation = args.a[3]
+    #    wtype = args.a[4]
+    #    DDL = args.a[5]
+    #    remarks = args.a[6]
+    #    testInput(number, name, project, timeEstimation, wtype, DDL, remarks)
+    #    addEntry(number, name, project, timeEstimation, wtype, DDL, remarks)
+    #if args.d:
+    #    if not deprecateEntry(args.d[0]):
+    #        raise ValueError("Invaid delete input!")
+    #if args.c:
+    #    autoClean()
+
+    #if args.m:
+    #    modifyEntry(args.m[0], args.m[1])
+
+    #if not args.s:
+    #    sortEntry()
+    #elif args.s[0] == "p":
+    #    sortEntry(choice="project")
+    #elif args.s[0] == "n":
+    #    sortEntry(choice="number")
+    #elif args.s[0] == "d":
+    #    sortEntry()
+
+    #if args.w:
+    #    width = args.w[0]
+    #else:
+    #    width = 17
+    #if args.n:
+    #    printSections(printLineNumber=True, printAfterwards=True, width=width)
+    #else:
+    #    printSections(width=width)
 
 
 if __name__ == "__main__":
@@ -359,8 +372,7 @@ if __name__ == "__main__":
 #
 #
 ## MAIN FEATURES
-### MORE COLORS
-#       use sty or the like to manage colors
+### REwrite data structures into more flexible excel-like columns and rows
 ### rewrite cli with click, substituting argparse
 #      more flexible prints
 ###  CHECK whether you can make it before DDL
@@ -373,6 +385,8 @@ if __name__ == "__main__":
 ### Github actions
 ###  FILTER
 ### interactive software (like khal)
+### BIGGER IDEA:
+#       transform this into command line excel?
 #
 #
 #
@@ -391,6 +405,8 @@ if __name__ == "__main__":
 # better UI
 #
 ## DONE
+# MORE COLORS
+#     use sty or the like to manage colors
 # x autoclean finished sections
 # x delete entries and clear the whole database (with warnings)
 # x more flexibility for column names
