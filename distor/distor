@@ -138,9 +138,9 @@ def modifyEntry(number, argument):
             return 0
 
 
-def printColor():
+def printColor(item):
     """print color by sty using the cusomized color dictionary"""
-    pass
+    print(colorsDic[colorTypes[item]], end="")
 
 
 def colorReset():
@@ -162,10 +162,11 @@ def printSection(toPrintHeaders, toPrintColumns, section,
                  printLineNumber=False, printAfterwards=False, width=19):
     """print one entry"""
     for item in toPrintColumns:
-        printColor()
-        print(f"{section[item]:^{widthLength[widthType[item]]}}|",
+        printColor(item)
+        print(f"{section[item]:^{widthLength[widthType[item]]}}",
               end="")
         colorReset()
+        print("|", end="")
     print("\n", end="")
 
 
