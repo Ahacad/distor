@@ -20,6 +20,7 @@ import os
 import json
 from datetime import datetime, date
 from sty import fg
+import click
 #from header import *
 
 
@@ -87,18 +88,81 @@ def loadRows():
         extendedRows = json.load(json_file)
 
 
+# the functions to be achieved:
+# First we save all the values as a big 2-dimensional array
+# including "rows" and "columns" and the basic cells
+# row-0 is the special row - the header
+#
+# we than can make a series of actions all these basic elements
+
+
+@click.command()
+@click.option()
+def addRow(row):
+    """add a row, length must be the same to the header row"""
+    global rows
+    if len(row) == len(rows[0]):
+        rows.append(list(row))
+    else:
+        raise ValueError("The number of elements in the row is incorrect!")
+
+
+@click.command()
+def modifyRow(rowNum, row):
+    """modify a whole row by sending position and all the new values
+       specially, when rowNum is 0 you are modifying the header
+    """
+    global rows
+    if len(row) == len(rows[0]):
+        rows[rowNum] = row
+    else:
+        raise ValueError("The number of elements in the row is incorrect!")
+
+
+@click.command()
+def exchangeRow(rowNum1, rowNum2):
+    """exchange two rows"""
+    global rows
+    if rowNum1 == 0 or rowNum2 == 0:
+        raise ValueError("Cannot exchange row with header!")
+    rows[rowNum1], rows[rowNum2] = rows[rowNum2], rows[rowNum1]
+
+
+@click.command()
+def modifyCell(rowNum, colNum, cell):
+    """modify a particular cell by sending position and the new value"""
+    global rows
+    rows[rowNum][colNum] = cell
+
+
+@click.command()
+def addColumn():
+    """"""
+    pass
+
+
+@click.command()
 def deleteColumn():
     """delete a whole column"""
     pass
 
 
-def deleteRow():
+@click.command()
+def deleteRow(rowNum, deprecate=True):
     """delete a whole row"""
-    pass
+    if rowNum > 0:
+        rows.pop(rowNum)
 
 
-def deleteCell():
+@click.command()
+def deleteCell(rowNum, colNum):
     """modify a single cell, changing it into empty string"""
+    global rows
+    rows[rowNum][colNum] = ""
+
+
+def printRows():
+    """"""
     pass
 
 
@@ -111,6 +175,18 @@ def saveRows():
         json.dump(deprecatedRows, outfile, indent=4)
     with open(extendedPath, "w") as outfile:
         json.dump(extendedRows, outfile, indent=4)
+
+
+def sort():
+    """the sort funcs"""
+    pass
+
+
+def filter():
+    """the filter funcs"""
+    pass
+
+
 
 
 #def addEntry(number, name, project, timeEstimation, wtype, DDL, remarks):
