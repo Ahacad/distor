@@ -51,6 +51,27 @@ class Sheet:
             for i in range(self.height):
                 self.sheet[i][colNum1], self.sheet[i][colNum2] = self.sheet[i][colNum2], self.sheet[i][colNum1]
 
+    def sortFunc(self, colNum):
+        """sort the rows according to the specific column"""
+        self.sheet[1:] = sorted(self.sheet[1:], key=lambda x: x[colNum])
+
+    def filt(self, colNum, dest, rule="EQUALTO"):
+        """filter the array as according to the rule"""
+        if rule == "EQUALTO":
+            res = []
+            for i in range(1, self.height):
+                if self.sheet[i][colNum] == dest:
+                    res.append(self.sheet[i])
+        elif rule == "GREATERTHAN":
+            for i in range(1, self.height):
+                if self.sheet[i][colNum] > dest:
+                    res.append(self.sheet[i])
+        elif rule == "SMALLERTHAN":
+            for i in range(1, self.height):
+                if self.sheet[i][colNum] < dest:
+                    res.append(self.sheet[i])
+        return res
+
     
     def printRows():
         """"""
@@ -64,7 +85,7 @@ class Sheet:
                 print(self.sheet[i][j], " ", end="")
             print()
 
-    def saveSheet(self):
+    def saveSheet(self, storedPath):
         """store entries to the path
         """
         with open(storedPath, "w") as outfile:
@@ -73,6 +94,12 @@ class Sheet:
         #    json.dump(deprecatedRows, outfile, indent=4)
         #with open(extendedPath, "w") as outfile:
         #    json.dump(extendedRows, outfile, indent=4)
+
+#test = Sheet([["Num", "Ar", "arts"], [2, 3, 4], [1, 2, 3], [9, 3, 7]])
+#test.sortFunc(1)
+#res = test.filt(1, 3)
+#print(res)
+#test.printSheet()
 
                 
 

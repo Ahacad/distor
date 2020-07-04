@@ -82,25 +82,30 @@ class colors:
 # we than can make a series of actions all these basic elements
 
 
+class Distor(Sheet):
+
+    pass
+
+    #PRINT MODULE (COLOR)
 
 
 
 def loadSheet():
     """load sections from the stored json file
     """
-    global sheet
     with open(storedPath) as json_file:
         sheet = json.load(json_file)
-    global deprecatedSheet
     with open(deprecatedPath) as json_file:
         deprecatedSheet = json.load(json_file)
-    global extendedSheet
     with open(extendedPath) as json_file:
         extendedSheet = json.load(json_file)
     return sheet, deprecatedSheet, extendedSheet
 
 
-
+def main():
+    sheet, deprecatedSheet, extendedSheet = loadSheet()
+    distor = Distor(sheet)
+    distorDepre = Distor(deprecatedSheet)
 
 
 def estimateTime():
@@ -155,15 +160,6 @@ def autoClean():
             sections.remove(section)
     return 0
 
-
-def main():
-    sheet, deprecatedSheet, extendedSheet = loadSheet()
-    Distor = Sheet(sheet)
-    DistorDepre = Sheet(deprecatedSheet)
-    
-
-if __name__ == "__main__":
-    main()
 
 
 
