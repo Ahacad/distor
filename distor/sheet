@@ -3,7 +3,7 @@
 import click 
 import os
 import json
-from sty import fg
+from sty import fg, ef, rs
 from datetime import datetime, date
 
 
@@ -72,10 +72,23 @@ class Sheet:
                     res.append(self.sheet[i])
         return res
 
-    
-    def printRows():
-        """"""
-        pass
+    def printSheetWithNumber(self):
+        """print the whole sheet with navigating numbers"""
+        colWidth = [0 for i in range(self.width)]
+        for i in range(self.height):
+            for j in range(self.width):
+                colWidth[j] = max(colWidth[j], len(self.sheet[i][j]))
+        print("    ", end="")  # print the header
+        for i in range(self.width):
+            print(ef.underl + f"{i:^{colWidth[i] + 1}}"
+                  + rs.underl, end="")  # print the header
+        print("\n", end="")
+        for i in range(self.height):   # print each row
+            print(f"{i: >3}" + "|", end="")
+            for j in range(self.width):
+                print(f"{self.sheet[i][j]:^{colWidth[j] + 1}}", end="")
+            print("\n", end="")
+
 
 
     def printSheet(self):
@@ -95,8 +108,9 @@ class Sheet:
         #with open(extendedPath, "w") as outfile:
         #    json.dump(extendedRows, outfile, indent=4)
 
-#test = Sheet([["Num", "Ar", "arts"], [2, 3, 4], [1, 2, 3], [9, 3, 7]])
+test = Sheet([["Num", "Ar", "arts"], ["2", "3", "4"], ["1", "2", "3"], ["9", "3", "7"]])
 #test.sortFunc(1)
+test.printSheetWithNumber()
 #res = test.filt(1, 3)
 #print(res)
 #test.printSheet()
