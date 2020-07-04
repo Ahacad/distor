@@ -1,0 +1,105 @@
+#! /usr/bin/env python3
+
+import click 
+import os
+import json
+from sty import fg
+from datetime import datetime, date
+
+
+class Sheet:
+
+    def __init__(self, sheet):
+        self.sheet = sheet
+        self.width = len(sheet[0])
+        self.height = len(sheet)
+
+    def modifyCell(self, rowNum, colNum, cell):
+        """modify a particular cell by sending position and the new value"""
+        self.sheet[rowNum][colNum] = cell
+
+    def deleteCell(self, rowNum, colNum):
+        """modify a single cell, changing it into empty string"""
+        self.sheet[rowNum][colNum] = ""
+
+    def addRow(self, row):
+        """add a row, length must be the same to the header row"""
+        if len(row) == self.width:
+            self.sheet.append(row)
+            self.height += 1
+        else:
+            raise ValueError("The number of elements in the row is incorrect!")
+
+    def modifyRow(self, rowNum, row):
+        """modify a whole row by sending position and all the new values
+           specially, when rowNum is 0 you are modifying the header
+        """
+        if len(row) == self.width:
+            self.sheet[rowNum] = row
+        else:
+            raise ValueError("The number of elements in the row is incorrect!")
+
+    def exchangeRow(self, rowNum1, rowNum2):
+        """exchange two rows"""
+        if rowNum1 == 0 or rowNum2 == 0:
+            raise ValueError("Cannot exchange row with header!")
+        self.sheet[rowNum1], self.sheet[rowNum2] = self.sheet[rowNum2], self.sheet[rowNum1]
+
+    def exchangeColumn(self, colNum1, colNum2):
+        """exchange two columns"""
+        if 0 <= colNum1 < self.width and 0 <= colNum2 < self.width:
+            for i in range(self.height):
+                self.sheet[i][colNum1], self.sheet[i][colNum2] = self.sheet[i][colNum2], self.sheet[i][colNum1]
+
+    
+    def printRows():
+        """"""
+        pass
+
+
+    def printSheet(self):
+        """print the sheet"""
+        for i in range(self.height):
+            for j in range(self.width):
+                print(self.sheet[i][j], " ", end="")
+            print()
+
+    def saveSheet(self):
+        """store entries to the path
+        """
+        with open(storedPath, "w") as outfile:
+            json.dump(self.sheet, outfile, indent=4)
+        #with open(deprecatedPath, "w") as outfile:
+        #    json.dump(deprecatedRows, outfile, indent=4)
+        #with open(extendedPath, "w") as outfile:
+        #    json.dump(extendedRows, outfile, indent=4)
+
+                
+
+#@click.command()
+def addColumn():
+    """"""
+    pass
+
+
+#@click.command()
+def deleteColumn():
+    """delete a whole column"""
+    pass
+
+
+#@click.command()
+def deleteRow(rowNum, deprecate=True):
+    """delete a whole row"""
+    if rowNum > 0:
+        rows.pop(rowNum)
+
+
+def sort():
+    """the sort funcs"""
+    pass
+
+
+def filter():
+    """the filter funcs"""
+    pass
