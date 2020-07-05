@@ -29,6 +29,15 @@ class Sheet:
         else:
             raise ValueError("The number of elements in the row is incorrect!")
 
+    def insertRow(self, row, rowNum):
+        """insert a row at rowNum """
+        if len(row) == self.width:
+            self.sheet.insert(rowNum, row)
+
+    def copyRow(self, rowNum):
+        """copy a row and return it"""
+        return self.sheet[rowNum]
+
     def deleteRow(self, rowNum):
         """delete a row by its number"""
         if 0 < rowNum < self.sheet.height:

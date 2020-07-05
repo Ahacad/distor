@@ -127,6 +127,9 @@ class Distor(Sheet):
         self.loadColorScheme()
         self.printColorScheme()
         
+    def copyRow(self):
+        """copy a row, but change its number accordingly"""
+        pass
 
     def manageOperations(self):
         """"""
@@ -135,7 +138,7 @@ class Distor(Sheet):
     def managePrints(self):
         """"""
         pass
-
+    
     
 
 
