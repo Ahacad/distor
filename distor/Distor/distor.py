@@ -17,7 +17,7 @@
 
 import os
 import json
-import click
+import argparse
 from datetime import datetime, date
 from sty import fg
 from .sheet import Sheet
@@ -91,8 +91,11 @@ class Distor(Sheet):
         self.width = len(sheet[0])
         self.height = len(sheet)
         self.loadColorScheme()
-        self.test()
-        print("ASTIN")
+        self.printColorScheme_click()
+        #self.printDistor()
+
+        self.saveSheet(storedPath)
+
 
     def loadColorScheme(self):
         """load color scheme, if not exist, creat one"""
@@ -104,22 +107,29 @@ class Distor(Sheet):
         with open(metaPath) as json_file:
             self.colorScheme = json.load(json_file)
 
+        
+    def printColorScheme(self):
+        """print the color scheme along with header"""
+        print(HELLO)
+
+
+    def test(self):
+        self.test_click()
+
     @click.command()
     @click.option("-n", default=1)
-    def test(n):
-        print(n)
+    def test_click(n):
+        print("*" * n)
 
     def changeColorScheme(self, colNum=-1):
         """change the color scheme"""
         pass
 
-    # PRINT MODULE (COLOR)
-    def printHeader():
-        """Print header"""
-        pass
+    
+
+
 
     # CALCULATE DDL MODULE
-
 
 def loadSheet():
     """load sections from the stored json file
@@ -131,12 +141,10 @@ def loadSheet():
     #with open(extendedPath) as json_file:
     #    extendedSheet = json.load(json_file)
     #return sheet, deprecatedSheet, extendedSheet
+    return sheet
 
 
-def main():
-    sheet, deprecatedSheet, extendedSheet = loadSheet()
-    distor = Distor(sheet)
-    #distorDepre = Distor(deprecatedSheet)
+distor = Distor(loadSheet())
 
 
 

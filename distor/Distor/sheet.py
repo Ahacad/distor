@@ -1,6 +1,5 @@
 #! /usr/bin/env python3
 
-import click 
 import os
 import json
 from sty import fg, ef, rs
@@ -95,8 +94,6 @@ class Sheet:
             for j in range(self.width):
                 print(f"{self.sheet[i][j]:^{colWidth[j] + 1}}", end="")
             print("\n", end="")
-
-
 
     def printSheet(self):
         """print the sheet"""
