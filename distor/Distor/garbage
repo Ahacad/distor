@@ -194,3 +194,57 @@ def cli():
 #    printSections(printLineNumber=True, printAfterwards=True, width=width)
 #else:
 #    printSections(width=width)
+
+
+
+def estimateTime():
+    # how the time remained is calculated?
+    """estimate whether you can make it before ddl
+    """
+    pass
+
+
+def initializaition():
+    """generate conifg file and folders"""
+    if not os.path.exists(storedPath):
+        pass
+
+
+
+
+def testInput(number, name, project, timeEstimation, wtype, DDL, remarks):
+    """ test the form of the input
+    """
+    pass
+
+
+def calculateTimeRemained(ddl, sectionPerDay=24):
+    """calculate time remained between today and the ddl
+    default calculating by starting at morning today and
+    end at night at the ddl day
+    """
+    today = date.today()
+    ddl = datetime.strptime(ddl, "%Y-%m-%d").date()
+    delta = (ddl - today).days
+    timeRemained = (delta + 1) * sectionPerDay
+    return timeRemained
+
+
+def checkDDL():
+    """check whether you can make it before ddl
+    """
+    
+
+
+def autoClean():
+    """automatically clean sections that have been finished
+    """
+    global deprecatedSections
+    for section in sections:
+        if section["timeUsed"] == section["timeEstimation"]:
+            deprecatedSections.append(section)
+            sections.remove(section)
+        elif section["timeUsed"] > section["timeEstimation"]:
+            extendedSections.append(section)
+            sections.remove(section)
+    return 0

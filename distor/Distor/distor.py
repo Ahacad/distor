@@ -17,9 +17,10 @@
 
 import os
 import json
+import click
 from datetime import datetime, date
 from sty import fg
-from sheet import Sheet
+from .sheet import Sheet
 
 HOME = "/home/ahacad/.distor/Dev/"
 storedPath = HOME + "stored.json"
@@ -90,6 +91,8 @@ class Distor(Sheet):
         self.width = len(sheet[0])
         self.height = len(sheet)
         self.loadColorScheme()
+        self.test()
+        print("ASTIN")
 
     def loadColorScheme(self):
         """load color scheme, if not exist, creat one"""
@@ -100,6 +103,11 @@ class Distor(Sheet):
                 json.dump(defaultColorScheme, json_file, indent=4)
         with open(metaPath) as json_file:
             self.colorScheme = json.load(json_file)
+
+    @click.command()
+    @click.option("-n", default=1)
+    def test(n):
+        print(n)
 
     def changeColorScheme(self, colNum=-1):
         """change the color scheme"""
@@ -112,75 +120,25 @@ class Distor(Sheet):
 
     # CALCULATE DDL MODULE
 
+
 def loadSheet():
     """load sections from the stored json file
     """
     with open(storedPath) as json_file:
         sheet = json.load(json_file)
-    with open(deprecatedPath) as json_file:
-        deprecatedSheet = json.load(json_file)
-    with open(extendedPath) as json_file:
-        extendedSheet = json.load(json_file)
-    return sheet, deprecatedSheet, extendedSheet
+    #with open(deprecatedPath) as json_file:
+    #    deprecatedSheet = json.load(json_file)
+    #with open(extendedPath) as json_file:
+    #    extendedSheet = json.load(json_file)
+    #return sheet, deprecatedSheet, extendedSheet
 
 
 def main():
     sheet, deprecatedSheet, extendedSheet = loadSheet()
     distor = Distor(sheet)
-    distorDepre = Distor(deprecatedSheet)
+    #distorDepre = Distor(deprecatedSheet)
 
 
-def estimateTime():
-    # how the time remained is calculated?
-    """estimate whether you can make it before ddl
-    """
-    pass
-
-
-def initializaition():
-    """generate conifg file and folders"""
-    if not os.path.exists(storedPath):
-        pass
-
-
-
-
-def testInput(number, name, project, timeEstimation, wtype, DDL, remarks):
-    """ test the form of the input
-    """
-    pass
-
-
-def calculateTimeRemained(ddl, sectionPerDay=24):
-    """calculate time remained between today and the ddl
-    default calculating by starting at morning today and
-    end at night at the ddl day
-    """
-    today = date.today()
-    ddl = datetime.strptime(ddl, "%Y-%m-%d").date()
-    delta = (ddl - today).days
-    timeRemained = (delta + 1) * sectionPerDay
-    return timeRemained
-
-
-def checkDDL():
-    """check whether you can make it before ddl
-    """
-    
-
-
-def autoClean():
-    """automatically clean sections that have been finished
-    """
-    global deprecatedSections
-    for section in sections:
-        if section["timeUsed"] == section["timeEstimation"]:
-            deprecatedSections.append(section)
-            sections.remove(section)
-        elif section["timeUsed"] > section["timeEstimation"]:
-            extendedSections.append(section)
-            sections.remove(section)
-    return 0
 
 
 

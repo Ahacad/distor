@@ -30,6 +30,13 @@ class Sheet:
         else:
             raise ValueError("The number of elements in the row is incorrect!")
 
+    def deleteRow(self, rowNum):
+        """delete a row by its number"""
+        if 0 < rowNum < self.sheet.height:
+            return self.sheet.pop(rowNum)
+        else:
+            raise ValueError("Row number out of boundry!")
+
     def modifyRow(self, rowNum, row):
         """modify a whole row by sending position and all the new values
            specially, when rowNum is 0 you are modifying the header
@@ -108,39 +115,9 @@ class Sheet:
         #with open(extendedPath, "w") as outfile:
         #    json.dump(extendedRows, outfile, indent=4)
 
-test = Sheet([["Num", "Ar", "arts"], ["2", "3", "4"], ["1", "2", "3"], ["9", "3", "7"]])
+#test = Sheet([["Num", "Ar", "arts"], ["2", "3", "4"], ["1", "2", "3"], ["9", "3", "7"]])
 #test.sortFunc(1)
-test.printSheetWithNumber()
+#test.printSheetWithNumber()
 #res = test.filt(1, 3)
 #print(res)
 #test.printSheet()
-
-                
-
-#@click.command()
-def addColumn():
-    """"""
-    pass
-
-
-#@click.command()
-def deleteColumn():
-    """delete a whole column"""
-    pass
-
-
-#@click.command()
-def deleteRow(rowNum, deprecate=True):
-    """delete a whole row"""
-    if rowNum > 0:
-        rows.pop(rowNum)
-
-
-def sort():
-    """the sort funcs"""
-    pass
-
-
-def filter():
-    """the filter funcs"""
-    pass
