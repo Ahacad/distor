@@ -90,12 +90,18 @@ class Distor(Sheet):
         self.sheet = sheet
         self.width = len(sheet[0])
         self.height = len(sheet)
-        self.loadColorScheme()
-        self.printColorScheme_click()
+        self.manageArgs()
+        self.manageColors()
+        self.manageOperations()
+        self.managePrints()
         #self.printDistor()
-
         self.saveSheet(storedPath)
 
+    def manageArgs(self):
+        """manage argparse"""
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--colorScheme", action="store_true")
+        self.args = parser.parse_args()
 
     def loadColorScheme(self):
         """load color scheme, if not exist, creat one"""
@@ -107,22 +113,27 @@ class Distor(Sheet):
         with open(metaPath) as json_file:
             self.colorScheme = json.load(json_file)
 
-        
+    def changeColorScheme(self):
+        """change the color scheme"""
+        pass
+
     def printColorScheme(self):
         """print the color scheme along with header"""
-        print(HELLO)
+        if self.args.colorScheme:
+            pass   # TODO  print color scheme
+    
+    def manageColors(self):
+        """manage color related things"""
+        self.loadColorScheme()
+        self.printColorScheme()
+        
 
+    def manageOperations(self):
+        """"""
+        pass
 
-    def test(self):
-        self.test_click()
-
-    @click.command()
-    @click.option("-n", default=1)
-    def test_click(n):
-        print("*" * n)
-
-    def changeColorScheme(self, colNum=-1):
-        """change the color scheme"""
+    def managePrints(self):
+        """"""
         pass
 
     
