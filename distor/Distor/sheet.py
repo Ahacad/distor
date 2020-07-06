@@ -40,7 +40,7 @@ class Sheet:
 
     def deleteRow(self, rowNum):
         """delete a row by its number"""
-        if 0 < rowNum < self.sheet.height:
+        if 0 <= rowNum < self.sheet.height:
             return self.sheet.pop(rowNum)
         else:
             raise ValueError("Row number out of boundry!")
@@ -56,8 +56,6 @@ class Sheet:
 
     def exchangeRow(self, rowNum1, rowNum2):
         """exchange two rows"""
-        if rowNum1 == 0 or rowNum2 == 0:
-            raise ValueError("Cannot exchange row with header!")
         self.sheet[rowNum1], self.sheet[rowNum2] = self.sheet[rowNum2], self.sheet[rowNum1]
 
     def exchangeColumn(self, colNum1, colNum2):
@@ -66,23 +64,26 @@ class Sheet:
             for i in range(self.height):
                 self.sheet[i][colNum1], self.sheet[i][colNum2] = self.sheet[i][colNum2], self.sheet[i][colNum1]
 
-    def sortFunc(self, colNum):
-        """sort the rows according to the specific column"""
-        self.sheet[1:] = sorted(self.sheet[1:], key=lambda x: x[colNum])
+    def sortFunc(self, colNum, fromRowNum, toRowNum):
+        """sort the rows according to the specific column
+        in the rows [fromRowNum, toRowNum]
+        """
+        if 0 <= fromRowNum and fromRowNum <= toRowNum and toRowNum < self.sheet.height:
+            self.sheet[fromRowNum:toRowNum + 1] = sorted(self.sheet[fromRowNum:toRowNum + 1], key=lambda x: x[colNum])
 
-    def filt(self, colNum, dest, rule="EQUALTO"):
+    def filt(self, colNum, dest, fromRowNum, toRowNum, rule="EQUALTO"):
         """filter the array as according to the rule"""
         if rule == "EQUALTO":
             res = []
-            for i in range(1, self.height):
+            for i in range(fromRowNum, toRowNum + 1):
                 if self.sheet[i][colNum] == dest:
                     res.append(self.sheet[i])
         elif rule == "GREATERTHAN":
-            for i in range(1, self.height):
+            for i in range(fromRowNum, toRowNum + 1):
                 if self.sheet[i][colNum] > dest:
                     res.append(self.sheet[i])
         elif rule == "SMALLERTHAN":
-            for i in range(1, self.height):
+            for i in range(fromRowNum, toRowNum + 1):
                 if self.sheet[i][colNum] < dest:
                     res.append(self.sheet[i])
         return res

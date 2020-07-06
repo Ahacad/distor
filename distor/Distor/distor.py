@@ -131,9 +131,25 @@ class Distor(Sheet):
         """copy a row, but change its number accordingly"""
         pass
 
+    # TODO: different stream of operations:
+    # NORMAL: sort defaultly by ddl and print distor 
+    # Modify: 
+    #    change   : by number && by name? 
+    #    add    
+    #    delete       something and print distor
+    # filt: filter targeted elements and print>?
+    # sort by ** and print
+    # print whether you can make it before DDL
+    # 
+    ### OPTIONS
+    # PRINT: partial/ALL print, color/no-color print
+
     def manageOperations(self):
         """"""
         pass
+
+    def printRow(self):
+        """print one row in distor, according to the color scheme"""
 
     def managePrints(self):
         """"""
