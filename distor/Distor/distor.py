@@ -69,7 +69,7 @@ class Distor(Sheet):
         parser.add_argument("-c", nargs=1)
         parser.add_argument("-f", nargs=3)
         parser.add_argument("-n", action="store_true")
-        parser.add_argument("-p", nargs=1)  # padding in printing
+        parser.add_argument("-p", nargs=1, default="2")  # padding in printing
         self.args = parser.parse_args()
 
     def loadColorScheme(self):
@@ -82,7 +82,6 @@ class Distor(Sheet):
         with open(metaPath) as json_file:
             self.metas = json.load(json_file)
             self.colorScheme = self.metas[0]
-            self.number = self.metas[1]
 
     def changeColorScheme(self):
         """change the color scheme"""
@@ -115,8 +114,26 @@ class Distor(Sheet):
         """sort the sheet"""
         self.sortFunc(5, 1, self.height)
 
+    def metaNumberPlus(self):
+        """increase number by one"""
+        number = self.metas[1][0]
+        num = int(number) + 1
+        number = str(num)
+        self.metas[1][0] = "0" * (5 - len(number)) + number
+        return self.metas[1][0]
+
     def manageOperations(self):
         """"""
+        if self.args.a:  # add
+            pass
+        elif self.args.d:  # delete
+            pass
+        elif self.args.c:  # copy
+            newRow = self.sheet[int(self.args.c[0])]
+            newRow[0] = self.metaNumberPlus()
+            self.addRow(newRow)
+        if self.args.f:  # filt
+            pass
         self.sortDistor()
 
     def printRow(self, rowNum, padding=2, color="YES"):
@@ -143,7 +160,7 @@ class Distor(Sheet):
         else:
             self.printRow(0, color="")
             for i in range(1, self.height):
-                self.printRow(i)
+                self.printRow(i, padding=int(self.args.p))
     
     def saveSheet(self, storedPath):
         """save the sheet"""
