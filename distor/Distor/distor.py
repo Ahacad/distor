@@ -129,7 +129,6 @@ class Distor(Sheet):
         newRow[5] = self.args.a[4]
         newRow[6] = self.args.a[5]
         self.addRow(newRow)
-        self.height += 1
 
     def distorDelete(self):
         """delete a row"""
