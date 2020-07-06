@@ -1,18 +1,4 @@
 #! /usr/bin/env python3
-# PROCESS OF OPERATION
-# TODO: different stream of operations:
-# DEFAULT: sort defaultly by ddl and print distor 
-# Modify: 
-#    change   : by number && by name? 
-#    add    
-#    delete       something and print distor
-# filt: filter targeted elements and print>?
-# sort by ** and print
-# print whether you can make it before DDL
-# 
-### OPTIONS
-# PRINT: partial/ALL print, color/no-color print
-
 
 import os
 import json
@@ -23,8 +9,8 @@ from .sheet import Sheet
 
 HOME = "/home/ahacad/.distor/Dev/"
 storedPath = HOME + "stored.json"
-deprecatedPath = HOME + "deprecated.json"
-extendedPath = HOME + "extended.json"
+#deprecatedPath = HOME + "deprecated.json"
+#extendedPath = HOME + "extended.json"
 metaPath = HOME + "meta.json"  # store color schemes
 colorsDic = {"red": fg.red,
              "green": fg.green,
@@ -34,14 +20,6 @@ colorsDic = {"red": fg.red,
              "cyan": fg.cyan,
              "white": fg.white,
              "": ""}
-
-
-# the functions to be achieved:
-# First we save all the values as a big 2-dimensional array
-# including "rows" and "columns" and the basic cells
-# row-0 is the special row - the header
-#
-# we than can make a series of actions all these basic elements
 
 
 class Distor(Sheet):
@@ -171,6 +149,8 @@ class Distor(Sheet):
             self.addRow(newRow)
         if self.args.f:  # filt
             self.filtDistor()
+        if self.args.ddl:
+            pass
         self.sortDistor()
 
     def printRow(self, rowNum, padding=2, color="YES"):
@@ -188,7 +168,6 @@ class Distor(Sheet):
             print(f"{self.sheet[rowNum][j]:^{self.colWidth[j] + padding}}", end="")
             print(fg.rs, end="")
             print("|", end="")
-        print("\n", end="")
 
     def managePrints(self):
         """"""
@@ -203,7 +182,8 @@ class Distor(Sheet):
                 self.skipColList = []
             self.printRow(0, color="")
             for i in range(1, self.height):
-                self.printRow(i, padding=int(self.args.p))
+                self.printRow(i, padding=int(self.args.p[0]))
+                print("\n", end="")
     
     def saveSheet(self, storedPath):
         """save the sheet"""
@@ -257,43 +237,6 @@ distor = Distor(loadSheet())
 ### rewrite cli with click, substituting argparse
 #      more flexible prints
 ###  CHECK whether you can make it before DDL
-### GROUPING
-# different coloring for grouped sections
-# Divide one section into a series of small sections while being able to
-#     represent their relationships
-### Initilization generated config
-#       and header names to cater to different needs
-### Github actions
-###  FILTER
-### interactive software (like khal)
-### BIGGER IDEA:
-#       transform this into command line excel?
-#
-#
-#
-#
-## POSSIBLE FEATURES
-# More flexibly add columns, use pandas DataFrame or python lists to manage
-#     columns, (allow infinite columnts)
-#
-# Print that automatically fit the length of string?
-#
-# modiry entries (I can just modify the json manually)
-# database robustness: the mechanism to allow modify the basic sections
-#    (maybe add more than the names later, so change them into more
-#    flexible sections)
-#
-# better UI
-#
-## DONE
-# MORE COLORS
-#     use sty or the like to manage colors
-# x autoclean finished sections
-# x delete entries and clear the whole database (with warnings)
-# x more flexibility for column names
-
-
-
 
 
 # techniques used:
