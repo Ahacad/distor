@@ -64,12 +64,6 @@ class Sheet:
             for i in range(self.height):
                 self.sheet[i][colNum1], self.sheet[i][colNum2] = self.sheet[i][colNum2], self.sheet[i][colNum1]
 
-    def sortFunc(self, colNum, fromRowNum, toRowNum):
-        """sort the rows according to the specific column
-        in the rows [fromRowNum, toRowNum]
-        """
-        if 0 <= fromRowNum and fromRowNum <= toRowNum and toRowNum < self.sheet.height:
-            self.sheet[fromRowNum:toRowNum + 1] = sorted(self.sheet[fromRowNum:toRowNum + 1], key=lambda x: x[colNum])
 
     def filt(self, colNum, dest, fromRowNum, toRowNum, rule="EQUALTO"):
         """filter the array as according to the rule"""

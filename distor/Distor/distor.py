@@ -27,53 +27,14 @@ storedPath = HOME + "stored.json"
 deprecatedPath = HOME + "deprecated.json"
 extendedPath = HOME + "extended.json"
 metaPath = HOME + "meta.json"  # store color schemes
-widthType = {"number": "medium",
-             "name": "long",
-             "project": "norm",
-             "timeEstimation": "short",
-             "wtype": "short",
-             "DDL": "norm",
-             "remarks": "long",
-             "timeUsed": "short",
-             "afterThoughts": "long"
-             }
-widthLength = {"short": 4,
-               "medium": 6,
-               "norm": 19,
-               "long": 30}
-colorTypes = {"number": "white",
-              "name": "green",
-              "project": "blue",
-              "timeEstimation": "yellow",
-              "wtype": "cyan",
-              "DDL": "red",
-              "remarks": "magenta",
-              "timeUsed": "white",
-              "afterThoughts": "white"
-              }
 colorsDic = {"red": fg.red,
              "green": fg.green,
              "yellow": fg.yellow,
              "blue": fg.blue,
              "magenta": fg.magenta,
              "cyan": fg.cyan,
-             "white": fg.white}
-
-
-class colors:
-    BLACK = "\033[0;30m"        # Black
-    RED = "\033[0;31m"          # Red
-    GREEN = "\033[0;32m"        # Green
-    YELLOW = "\033[0;33m"       # Yellow
-    BLUE = "\033[0;34m"         # Blue
-    PURPLE = "\033[0;35m"       # Purple
-    CYAN = "\033[0;36m"         # Cyan
-    WHITE = "\033[0;37m"        # White
-    RESET = "\033[0;0m"
-    BOLD = "\033[;1m"
-    REVERSE = "\033[;7m""]"
-
-
+             "white": fg.white,
+             "": ""}
 
 
 # the functions to be achieved:
@@ -91,11 +52,13 @@ class Distor(Sheet):
         self.width = len(sheet[0])
         self.height = len(sheet)
         self.skipList = [0, 7, 8]
+
         self.manageArgs()
         self.manageColors()
         self.manageOperations()
         self.managePrints()
         #self.printDistor()
+
         self.saveSheet(storedPath)
 
     def manageArgs(self):
@@ -106,7 +69,8 @@ class Distor(Sheet):
         parser.add_argument("-d", nargs=1)
         parser.add_argument("-c", nargs=1)
         parser.add_argument("-f", nargs=3)
-        parser.add_argument("--all", action="store_true")
+        parser.add_argument("-n", action="store_true")
+        parser.add_argument("-p", nargs=1)  # padding in printing
         self.args = parser.parse_args()
 
     def loadColorScheme(self):
@@ -151,18 +115,32 @@ class Distor(Sheet):
     ### OPTIONS
     # PRINT: partial/ALL print, color/no-color print
 
+    def sortFunc(self, colNum, fromRowNum, toRowNum):
+        """sort the rows according to the specific column
+        in the rows [fromRowNum, toRowNum]
+        """
+        if 0 <= fromRowNum and fromRowNum <= toRowNum and toRowNum <= self.height:
+            self.sheet[fromRowNum:toRowNum] = sorted(self.sheet[fromRowNum:toRowNum], key=lambda x: x[colNum])
+
+    def sortDistor(self):
+        """sort the sheet"""
+        self.sortFunc(5, 1, self.height)
+
     def manageOperations(self):
         """"""
-        pass
+        self.sortDistor()
 
-    def printRow(self, rowNum, color="YES"):
+    def printRow(self, rowNum, padding=2, color="YES"):
         """print one row in distor, according to the color scheme"""
         if color:
             colorScheme = self.colorScheme
         else:
-            colorScheme = ["white" for i in range(len(self.colorScheme))]
+            colorScheme = ["" for i in range(len(self.colorScheme))]
         for j in range(self.width):
-            print(f"{self.sheet[rowNum][j]:^{self.colWidth[j]}}", end="|")
+            print(colorsDic[colorScheme[j]], end="")
+            print(f"{self.sheet[rowNum][j]:^{self.colWidth[j] + padding}}", end="")
+            print(fg.rs, end="")
+            print("|", end="")
         print("\n", end="")
 
     def managePrints(self):
@@ -171,7 +149,7 @@ class Distor(Sheet):
         for i in range(self.height):
             for j in range(self.width):
                 self.colWidth[j] = max(self.colWidth[j], len(self.sheet[i][j]))
-        if self.args.all:
+        if self.args.n:
             self.printSheetWithNumber()
         else:
             self.printRow(0, color="")
@@ -182,7 +160,6 @@ class Distor(Sheet):
         """save the sheet"""
         with open(storedPath, "w") as json_file:
             json.dump(self.sheet, json_file, indent=4)
-
 
 
     # CALCULATE DDL MODULE
