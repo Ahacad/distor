@@ -51,6 +51,7 @@ class Distor(Sheet):
         self.width = len(sheet[0])
         self.height = len(sheet)
         self.skipColList = [0, 7, 8]
+        self.skipRowList = []
 
         self.manageArgs()
         self.manageColors()
@@ -70,6 +71,7 @@ class Distor(Sheet):
         parser.add_argument("-f", nargs=3)
         parser.add_argument("-n", action="store_true")
         parser.add_argument("--all", action="store_true")
+        parser.add_argument("--ddl", action="store_true")
         parser.add_argument("-p", nargs=1, default="2")  # padding in printing
         self.args = parser.parse_args()
 
@@ -123,6 +125,14 @@ class Distor(Sheet):
         self.metas[1][0] = "0" * (5 - len(number)) + number
         return self.metas[1][0]
 
+    def filtDistor(self):
+        """filt"""
+        filtRowList = self.filt(int(self.args.f[0]), self.args.f[1], 1, self.height, rule=self.args.f[2])
+        for i in range(1, self.height):
+            if i not in filtRowList:
+                self.skipRowList.append(i)
+
+
     def manageOperations(self):
         """"""
         if self.args.a:  # add
@@ -134,11 +144,13 @@ class Distor(Sheet):
             newRow[0] = self.metaNumberPlus()
             self.addRow(newRow)
         if self.args.f:  # filt
-            pass
+            self.filtDistor()
         self.sortDistor()
 
     def printRow(self, rowNum, padding=2, color="YES"):
         """print one row in distor, according to the color scheme"""
+        if rowNum in self.skipRowList:
+            return 0
         if color:
             colorScheme = self.colorScheme
         else:

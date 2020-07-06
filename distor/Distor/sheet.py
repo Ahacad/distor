@@ -69,17 +69,17 @@ class Sheet:
         """filter the array as according to the rule"""
         if rule == "EQUALTO":
             res = []
-            for i in range(fromRowNum, toRowNum + 1):
+            for i in range(fromRowNum, toRowNum):
                 if self.sheet[i][colNum] == dest:
-                    res.append(self.sheet[i])
+                    res.append(i)
         elif rule == "GREATERTHAN":
-            for i in range(fromRowNum, toRowNum + 1):
+            for i in range(fromRowNum, toRowNum):
                 if self.sheet[i][colNum] > dest:
-                    res.append(self.sheet[i])
+                    res.append(i)
         elif rule == "SMALLERTHAN":
-            for i in range(fromRowNum, toRowNum + 1):
+            for i in range(fromRowNum, toRowNum):
                 if self.sheet[i][colNum] < dest:
-                    res.append(self.sheet[i])
+                    res.append(i)
         return res
 
     def printSheetWithNumber(self):
