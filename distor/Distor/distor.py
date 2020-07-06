@@ -1,18 +1,17 @@
 #! /usr/bin/env python3
-
-
-#
-#        "number": number,
-#        "name": name,
-#        "project": project,
-#        "timeEstimation": timeEstimation,
-#        "wtype": wtype,
-#        "DDL": DDL,
-#        "remarks": remarks,
-#        "timeUsed": "",
-#        "afterThoughts": ""
-#
-#
+# PROCESS OF OPERATION
+# TODO: different stream of operations:
+# DEFAULT: sort defaultly by ddl and print distor 
+# Modify: 
+#    change   : by number && by name? 
+#    add    
+#    delete       something and print distor
+# filt: filter targeted elements and print>?
+# sort by ** and print
+# print whether you can make it before DDL
+# 
+### OPTIONS
+# PRINT: partial/ALL print, color/no-color print
 
 
 import os
@@ -81,7 +80,9 @@ class Distor(Sheet):
             with open(metaPath, "w") as json_file:
                 json.dump(defaultColorScheme, json_file, indent=4)
         with open(metaPath) as json_file:
-            self.colorScheme = json.load(json_file)
+            self.metas = json.load(json_file)
+            self.colorScheme = self.metas[0]
+            self.number = self.metas[1]
 
     def changeColorScheme(self):
         """change the color scheme"""
@@ -102,18 +103,6 @@ class Distor(Sheet):
         """copy a row, but change its number accordingly"""
         pass
 
-    # TODO: different stream of operations:
-    # NORMAL: sort defaultly by ddl and print distor 
-    # Modify: 
-    #    change   : by number && by name? 
-    #    add    
-    #    delete       something and print distor
-    # filt: filter targeted elements and print>?
-    # sort by ** and print
-    # print whether you can make it before DDL
-    # 
-    ### OPTIONS
-    # PRINT: partial/ALL print, color/no-color print
 
     def sortFunc(self, colNum, fromRowNum, toRowNum):
         """sort the rows according to the specific column
@@ -160,6 +149,8 @@ class Distor(Sheet):
         """save the sheet"""
         with open(storedPath, "w") as json_file:
             json.dump(self.sheet, json_file, indent=4)
+        with open(metaPath, "w") as json_file:
+            json.dump(self.metas, json_file, indent=4)
 
 
     # CALCULATE DDL MODULE
