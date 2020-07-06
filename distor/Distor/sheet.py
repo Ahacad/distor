@@ -40,7 +40,7 @@ class Sheet:
 
     def deleteRow(self, rowNum):
         """delete a row by its number"""
-        if 0 <= rowNum < self.sheet.height:
+        if 0 <= rowNum < self.height:
             return self.sheet.pop(rowNum)
         else:
             raise ValueError("Row number out of boundry!")

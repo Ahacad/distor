@@ -125,6 +125,14 @@ class Distor(Sheet):
         self.metas[1][0] = "0" * (5 - len(number)) + number
         return self.metas[1][0]
 
+    def metaNumberMinus(self):
+        """increase number by one"""
+        number = self.metas[1][0]
+        num = int(number) - 1
+        number = str(num)
+        self.metas[1][0] = "0" * (5 - len(number)) + number
+        return self.metas[1][0]
+
     def filtDistor(self):
         """filt"""
         filtRowList = self.filt(int(self.args.f[0]), self.args.f[1], 1, self.height, rule=self.args.f[2])
@@ -132,15 +140,33 @@ class Distor(Sheet):
             if i not in filtRowList:
                 self.skipRowList.append(i)
 
+    def addToDistor(self):
+        """add to distor"""
+        newRow = self.sheet[0][:]
+        newRow[0] = self.metaNumberPlus()
+        newRow[1] = self.args.a[0]
+        newRow[2] = self.args.a[1]
+        newRow[3] = self.args.a[2]
+        newRow[4] = self.args.a[3]
+        newRow[5] = self.args.a[4]
+        newRow[6] = self.args.a[5]
+        self.addRow(newRow)
+        self.height += 1
+
+    def distorDelete(self):
+        """delete a row"""
+        if int(self.args.d[0]) > 0:
+            self.deleteRow(int(self.args.d[0]))
+        self.height -= 1
 
     def manageOperations(self):
         """"""
         if self.args.a:  # add
-            pass
+            self.addToDistor()
         elif self.args.d:  # delete
-            pass
+            self.distorDelete()
         elif self.args.c:  # copy
-            newRow = self.sheet[int(self.args.c[0])]
+            newRow = self.sheet[int(self.args.c[0])][:]
             newRow[0] = self.metaNumberPlus()
             self.addRow(newRow)
         if self.args.f:  # filt
