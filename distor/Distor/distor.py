@@ -50,7 +50,7 @@ class Distor(Sheet):
         self.sheet = sheet
         self.width = len(sheet[0])
         self.height = len(sheet)
-        self.skipList = [0, 7, 8]
+        self.skipColList = [0, 7, 8]
 
         self.manageArgs()
         self.manageColors()
@@ -69,6 +69,7 @@ class Distor(Sheet):
         parser.add_argument("-c", nargs=1)
         parser.add_argument("-f", nargs=3)
         parser.add_argument("-n", action="store_true")
+        parser.add_argument("--all", action="store_true")
         parser.add_argument("-p", nargs=1, default="2")  # padding in printing
         self.args = parser.parse_args()
 
@@ -143,6 +144,8 @@ class Distor(Sheet):
         else:
             colorScheme = ["" for i in range(len(self.colorScheme))]
         for j in range(self.width):
+            if j in self.skipColList:
+                continue
             print(colorsDic[colorScheme[j]], end="")
             print(f"{self.sheet[rowNum][j]:^{self.colWidth[j] + padding}}", end="")
             print(fg.rs, end="")
@@ -155,9 +158,11 @@ class Distor(Sheet):
         for i in range(self.height):
             for j in range(self.width):
                 self.colWidth[j] = max(self.colWidth[j], len(self.sheet[i][j]))
-        if self.args.n:
+        if self.args.all:
             self.printSheetWithNumber()
         else:
+            if self.args.n:
+                self.skipColList = []
             self.printRow(0, color="")
             for i in range(1, self.height):
                 self.printRow(i, padding=int(self.args.p))
