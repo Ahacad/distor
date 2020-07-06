@@ -19,7 +19,7 @@ import os
 import json
 import argparse
 from datetime import datetime, date
-from sty import fg
+from sty import fg, ef, rs
 from .sheet import Sheet
 
 HOME = "/home/ahacad/.distor/Dev/"
@@ -90,6 +90,7 @@ class Distor(Sheet):
         self.sheet = sheet
         self.width = len(sheet[0])
         self.height = len(sheet)
+        self.skipList = [0, 7, 8]
         self.manageArgs()
         self.manageColors()
         self.manageOperations()
@@ -101,6 +102,11 @@ class Distor(Sheet):
         """manage argparse"""
         parser = argparse.ArgumentParser()
         parser.add_argument("--colorScheme", action="store_true")
+        parser.add_argument("-a", nargs=6)
+        parser.add_argument("-d", nargs=1)
+        parser.add_argument("-c", nargs=1)
+        parser.add_argument("-f", nargs=3)
+        parser.add_argument("--all", action="store_true")
         self.args = parser.parse_args()
 
     def loadColorScheme(self):
@@ -120,7 +126,8 @@ class Distor(Sheet):
     def printColorScheme(self):
         """print the color scheme along with header"""
         if self.args.colorScheme:
-            pass   # TODO  print color scheme
+            for i in range(len(self.colorScheme)):
+                print(self.colorScheme[i], " ")
     
     def manageColors(self):
         """manage color related things"""
@@ -148,14 +155,33 @@ class Distor(Sheet):
         """"""
         pass
 
-    def printRow(self):
+    def printRow(self, rowNum, color="YES"):
         """print one row in distor, according to the color scheme"""
+        if color:
+            colorScheme = self.colorScheme
+        else:
+            colorScheme = ["white" for i in range(len(self.colorScheme))]
+        for j in range(self.width):
+            print(f"{self.sheet[rowNum][j]:^{self.colWidth[j]}}", end="|")
+        print("\n", end="")
 
     def managePrints(self):
         """"""
-        pass
+        self.colWidth = [0 for i in range(self.width)]
+        for i in range(self.height):
+            for j in range(self.width):
+                self.colWidth[j] = max(self.colWidth[j], len(self.sheet[i][j]))
+        if self.args.all:
+            self.printSheetWithNumber()
+        else:
+            self.printRow(0, color="")
+            for i in range(1, self.height):
+                self.printRow(i)
     
-    
+    def saveSheet(self, storedPath):
+        """save the sheet"""
+        with open(storedPath, "w") as json_file:
+            json.dump(self.sheet, json_file, indent=4)
 
 
 
