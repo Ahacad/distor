@@ -180,7 +180,8 @@ class Distor(Sheet):
         else:
             if self.args.n:
                 self.skipColList = []
-            self.printRow(0, color="")
+            self.printRow(0, padding=int(self.args.p[0]), color="")
+            print("\n", end="")
             for i in range(1, self.height):
                 self.printRow(i, padding=int(self.args.p[0]))
                 print("\n", end="")
