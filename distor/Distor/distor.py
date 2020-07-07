@@ -24,10 +24,14 @@ colorsDic = {"red": fg.red,
 
 class Distor(Sheet):
 
+    ## Add option for automatically increase N days when copying a row
+    ## Calculate whether you can make it before ddl
+
     def __init__(self, sheet):
         self.sheet = sheet
         self.width = len(sheet[0])
         self.height = len(sheet)
+        self.remainSections = 0
         self.skipColList = [0, 7, 8]
         self.skipRowList = []
 
@@ -79,11 +83,6 @@ class Distor(Sheet):
         """manage color related things"""
         self.loadColorScheme()
         self.printColorScheme()
-        
-    def copyRow(self):
-        """copy a row, but change its number accordingly"""
-        pass
-
 
     def sortFunc(self, colNum, fromRowNum, toRowNum):
         """sort the rows according to the specific column
@@ -163,6 +162,14 @@ class Distor(Sheet):
             pass
         self.sortDistor()
 
+    def calculateDDL(self, rowNum, padding):
+        """calculate DDL and print"""
+        if rowNum == 0:
+            print(f"{'SUM':^{3 + padding}}|", end="")
+        else:
+            self.remainSections += int(self.sheet[rowNum][3])
+            print(f"{self.remainSections:^{3 + padding}}|", end="")
+
     def printRow(self, rowNum, padding=2, color="YES"):
         """print one row in distor, according to the color scheme"""
         if rowNum in self.skipRowList:
@@ -178,6 +185,8 @@ class Distor(Sheet):
             print(f"{self.sheet[rowNum][j]:^{self.colWidth[j] + padding}}", end="")
             print(fg.rs, end="")
             print("|", end="")
+        if self.args.ddl:
+            self.calculateDDL(rowNum, padding)
 
     def managePrints(self):
         """"""
