@@ -47,6 +47,7 @@ class Distor(Sheet):
         parser.add_argument("-d", nargs=1)
         parser.add_argument("-c", nargs=1)
         parser.add_argument("-f", nargs=3)
+        parser.add_argument("-m", nargs=2)
         parser.add_argument("-n", action="store_true")
         parser.add_argument("--all", action="store_true")
         parser.add_argument("--ddl", action="store_true")
@@ -136,6 +137,14 @@ class Distor(Sheet):
             self.deleteRow(int(self.args.d[0]))
         self.height -= 1
 
+    def modifyDistorRow(self):
+        """modify a row in distor"""
+        rowNum = int(self.args.m[0])
+        colNum = int(self.args.m[1].split("=")[0])
+        cell = self.args.m[1].split("=")[1]
+        self.modifyCell(rowNum, colNum, cell)
+
+
     def manageOperations(self):
         """"""
         if self.args.a:  # add
@@ -146,6 +155,8 @@ class Distor(Sheet):
             newRow = self.sheet[int(self.args.c[0])][:]
             newRow[0] = self.metaNumberPlus()
             self.addRow(newRow)
+        elif self.args.m:
+            self.modifyDistorRow()
         if self.args.f:  # filt
             self.filtDistor()
         if self.args.ddl:
