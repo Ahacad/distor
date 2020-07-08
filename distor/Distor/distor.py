@@ -162,12 +162,19 @@ class Distor(Sheet):
             pass
         self.sortDistor()
 
+    def getInt(self, x):
+        """convert x to int"""
+        if x.isdigit():
+            return int(x)
+        else:
+            return 0
+
     def calculateDDL(self, rowNum, padding):
         """calculate DDL and print"""
         if rowNum == 0:
             print(f"{'SUM':^{3 + padding}}|", end="")
         else:
-            self.remainSections += int(self.sheet[rowNum][3])
+            self.remainSections += int(self.sheet[rowNum][3]) - self.getInt(self.sheet[rowNum][7])
             print(f"{self.remainSections:^{3 + padding}}|", end="")
 
     def printRow(self, rowNum, padding=2, color="YES"):
